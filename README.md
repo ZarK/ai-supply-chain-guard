@@ -33,6 +33,7 @@ This skill turns those lessons into agent behavior:
         |-- ecosystem-playbooks.md
         |-- incident-response.md
         |-- package-manager-configs.md
+        |-- threat-model-and-rules.md
         `-- tooling.md
 ```
 
@@ -53,6 +54,20 @@ This skill turns those lessons into agent behavior:
 ## What it cannot guarantee
 
 No skill can prove every dependency is safe. Signatures, provenance, trusted publishing, and attestations prove identity or integrity properties; they do not prove the built code is benign. This skill reduces preventable risk by forcing slower, explicit, evidence-based dependency decisions. It should be paired with real controls: isolated environments, registry intelligence, secret scanning, dependency review, code review, provenance verification, least-privilege CI, and incident response.
+
+## Learn the threat model
+
+Start with [`supply-chain-guard/references/threat-model-and-rules.md`](supply-chain-guard/references/threat-model-and-rules.md) if you want the "why" behind the skill. It teaches the recent attack patterns this skill is designed around:
+
+- legitimate packages that briefly publish malicious versions
+- install-time lifecycle scripts and source builds as code execution
+- trusted publishing and provenance as identity evidence, not safety proof
+- GitHub Actions, reusable workflows, caches, and artifacts as supply-chain dependencies
+- package-age gates, lockfiles, and exact pins as practical blast-radius reducers
+- IDE extensions, MCP servers, and AI-agent tool configs as executable development dependencies
+- incident response when a malicious install may have exposed credentials or release infrastructure
+
+That tutorial is meant for humans and agents. The shorter `SKILL.md` stays focused on what to do; the tutorial explains why those rules exist.
 
 ## Install globally
 

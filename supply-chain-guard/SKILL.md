@@ -14,6 +14,7 @@ This skill is a policy and workflow layer. It does not replace package-manager c
 Keep this file active for every dependency-related task. Load these references only when the task needs their detail:
 
 - `references/ecosystem-playbooks.md`: exact safe commands, lockfile rules, and package-age metadata by ecosystem.
+- `references/threat-model-and-rules.md`: tutorial explaining the attack classes behind the rules and why the skill is strict.
 - `references/attack-patterns.md`: compromise indicators and suspicious dependency patterns to search for.
 - `references/incident-response.md`: suspected compromise triage, containment, token rotation, and recovery.
 - `references/ci-and-repository-hardening.md`: repository rules, CI permissions, dependency review, secret scanning, and release hardening.
