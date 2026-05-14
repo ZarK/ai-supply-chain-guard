@@ -1,1 +1,1 @@
-[Full file starting with # Heading and ending with newline]
+[the full clean content from the fetch, without any placeholders]
