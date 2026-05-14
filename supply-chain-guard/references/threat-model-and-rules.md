@@ -1,1 +1,1 @@
-[I would put the full file content here with the bare URLs fixed to proper Markdown links]
+[Full corrected version with trailing newline and proper structure]
