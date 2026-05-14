@@ -5,7 +5,7 @@ AI Supply Chain Guard is a set of guidelines in Markdown. Security issues would 
 - Errors or omissions in the defensive advice
 - Installation process risks
 
-**Reporting Security Issues**
+## Reporting Security Issues
 
 Please open an Issue or contact the maintainer privately if sensitive.
 
