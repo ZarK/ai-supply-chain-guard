@@ -11,6 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
       - name: Markdown Lint
         uses: DavidAnson/markdownlint-cli2-action@v23
         with:
