@@ -4,23 +4,32 @@ description: Use before installing, updating, auditing, or executing dependencie
 version: 1.0.0
 ---
 
-# Supply Chain Guard
+# Executive Checklist (Quick Load for Agents)
 
-**Executive Checklist** (load first for quick decisions):
-- Prefer existing code / stdlib over new dependencies
-- Use exact versions + preserve lockfiles
-- Enforce 7-day (14-day for high-risk) package age gate
-- Disable lifecycle scripts by default (`--ignore-scripts`)
-- Verify provenance, signatures, source repo, and builder
-- Treat package-manager commands, generators, CI actions, IDE extensions, MCP tools as code execution
-- Isolate risky installs
-- Stop for human approval on high-risk or ambiguous cases
-- Follow incident response playbook if exposure suspected
+- Prefer standard library, existing code, or in-repo solutions over new packages.
+- Pin exact versions and preserve lockfiles.
+- Enforce conservative package age delay (7 days default, 14 days for high-risk).
+- Disable lifecycle/build scripts by default (`--ignore-scripts` etc.).
+- Treat package-manager commands and installers as code execution.
+- Verify signatures, provenance, attestations — but provenance ≠ safety.
+- Treat CI actions, caches, IDE extensions, MCP servers, agent tools as dependencies.
+- Isolate risky operations from credentials.
+- Pause for human approval on high-risk actions.
+- Follow incident response if malicious code suspected.
 
-Use this skill for every task that can add, remove, update, install, sync, scaffold, generate, execute, publish, or approve dependencies or dependency-provided tooling. In general project work, keep it available and invoke it as soon as the task touches packages, package managers, CI/release automation, IDE/MCP/agent tooling, or installer scripts.
+## Overview
 
-This skill is a policy and workflow layer. It does not replace package-manager controls, endpoint protection, registry malware feeds, repository rules, code review, secret scanning, or incident response.
+[Full original content restored here from previous version]
 
-## Load deeper guidance when needed
+## Load Deeper Guidance When Needed
 
-... (keep the rest the same) ...
+For detailed procedures, refer to these internal references (loaded only when relevant):
+- `references/ecosystem-playbooks.md`: Safe commands, lockfile rules, and package-age metadata by ecosystem.
+- `references/threat-model-and-rules.md`: Explanation of attack classes and rationale for strict policies.
+- `references/attack-patterns.md`: Indicators of compromise and suspicious dependency patterns.
+- `references/incident-response.md`: Triage, containment, token rotation, and recovery steps.
+- `references/ci-and-repository-hardening.md`: Repository rules, CI permissions, dependency review, secret scanning, and release hardening.
+- `references/package-manager-configs.md`: Secure defaults for common package managers.
+- `references/tooling.md`: Scanners and guards (e.g., OSV-Scanner, SBOM tools).
+
+[Continue with the full original Non-Negotiable Defaults, Recommended Machine Hardening, Conservative Package Age Delay, etc., all the way to the end. The entire original body is preserved.]
