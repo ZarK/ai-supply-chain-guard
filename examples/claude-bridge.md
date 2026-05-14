@@ -1,0 +1,5 @@
+# Supply Chain Guard
+
+Before any install, update, scaffold, package-manager command, CI action/workflow change, IDE/MCP/agent-tool change, release job, or dependency-provided tool execution, read and follow `.agents/skills/supply-chain-guard/SKILL.md`.
+
+For deeper guidance, load only the relevant file from `.agents/skills/supply-chain-guard/references/`.
