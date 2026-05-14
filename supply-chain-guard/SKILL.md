@@ -7,6 +7,7 @@ version: 1.0.0
 # Supply Chain Guard
 
 **Executive Checklist** (load first for quick decisions):
+
 - Prefer existing code / stdlib over new dependencies
 - Use exact versions + preserve lockfiles
 - Enforce 7-day (14-day for high-risk) package age gate
