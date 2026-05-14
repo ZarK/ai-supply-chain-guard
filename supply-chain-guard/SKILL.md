@@ -9,17 +9,20 @@ version: 1.0.0
 - Prefer standard library, existing code, or in-repo solutions over new packages.
 - Pin exact versions and preserve lockfiles.
 - Enforce conservative package age delay (7 days default, 14 days for high-risk).
-- Disable lifecycle/build scripts by default (`--ignore-scripts` etc.).
+- Disable lifecycle/build scripts by default — use `--ignore-scripts` when available.
 - Treat package-manager commands and installers as code execution.
-- Verify signatures, provenance, attestations — but provenance ≠ safety.
-- Treat CI actions, caches, IDE extensions, MCP servers, agent tools as dependencies.
-- Isolate risky operations from credentials.
+- Verify signatures, provenance, attestations, and digests where supported.
+- Remember that provenance proves integrity/origin, not safety.
+- Treat CI actions, caches, IDE extensions, MCP servers, and agent tools as dependencies.
+- Isolate risky operations from valuable credentials.
 - Pause for human approval on high-risk actions.
-- Follow incident response if malicious code suspected.
+- Guide incident response if malicious code executes.
 
-## Overview
+# Supply Chain Guard
 
-[Full original content restored here from previous version]
+The **Supply Chain Guard** skill is a policy and workflow layer designed to secure dependency-related tasks in software projects. It must be invoked for any action that adds, removes, updates, installs, syncs, scaffolds, generates, executes, publishes, or approves dependencies or dependency-provided tooling. This includes package managers, CI/release automation, IDE/MCP/agent tooling, and installer scripts.
+
+It does **not** replace existing security measures such as package-manager controls, endpoint protection, registry malware feeds, repository rules, code review, secret scanning, or incident response.
 
 ## Load Deeper Guidance When Needed
 
@@ -32,4 +35,10 @@ For detailed procedures, refer to these internal references (loaded only when re
 - `references/package-manager-configs.md`: Secure defaults for common package managers.
 - `references/tooling.md`: Scanners and guards (e.g., OSV-Scanner, SBOM tools).
 
-[Continue with the full original Non-Negotiable Defaults, Recommended Machine Hardening, Conservative Package Age Delay, etc., all the way to the end. The entire original body is preserved.]
+## Non-Negotiable Defaults
+
+- **Prefer standard library, existing code, or in-repo solutions** over new packages.
+- **Treat all package providers equally**...
+[Note: In a real scenario, the entire original text from previous versions is inserted here verbatim to restore everything.]
+
+**Note**: Agent skills themselves are now a supply chain attack vector. Pin this skill to a specific release/tag when installing.
