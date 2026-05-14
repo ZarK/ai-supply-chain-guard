@@ -3,6 +3,7 @@
 Thank you for your interest in contributing to AI Supply Chain Guard!
 
 ## Ways to Contribute
+
 - Improve the skill rules in SKILL.md (keep it concise and durable)
 - Expand or update references/ for new ecosystems or best practices
 - Improve installation instructions for new AI agents/tools
@@ -11,6 +12,7 @@ Thank you for your interest in contributing to AI Supply Chain Guard!
 - Help with documentation, promotion, or testing
 
 ## Guidelines
+
 - Fork and PR to main
 - Follow the spirit of the skill itself when modifying code or docs
 - Discuss major changes in Issues first
