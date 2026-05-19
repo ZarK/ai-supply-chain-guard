@@ -1,0 +1,21 @@
+README.md
+  s_58b9a99b8a3607::t_9e7019d005f4b3 212-213,216-218,243-245,247-253,260-262,272-274
+supply-chain-guard/references/threat-model-and-rules.md
+  s_58b9a99b8a3607::t_f666e976ecbf98 20,36,126-127,142,182,220,225-228
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.9",
+  "base_commit_sha": "455ffe43b526b5af70a9274937e24c9181391062",
+  "prompts": {},
+  "sessions": {
+    "s_58b9a99b8a3607": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e3f32-1701-7b33-bb3e-cd1ade96c416",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
