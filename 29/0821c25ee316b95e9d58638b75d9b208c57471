@@ -1,0 +1,26 @@
+CODE_OF_CONDUCT.md
+  s_58b9a99b8a3607::t_fb93bfb130ab0a 1-23
+.github/pull_request_template.md
+  s_58b9a99b8a3607::t_f0ebc74263fde9 3,7,17
+  s_58b9a99b8a3607::t_fb93bfb130ab0a 1-2,4-6,8-16
+.github/ISSUE_TEMPLATE/feature_request.md
+  s_58b9a99b8a3607::t_fb93bfb130ab0a 1-24
+.github/ISSUE_TEMPLATE/config.yml
+  s_58b9a99b8a3607::t_fb93bfb130ab0a 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.9",
+  "base_commit_sha": "290821c25ee316b95e9d58638b75d9b208c57471",
+  "prompts": {},
+  "sessions": {
+    "s_58b9a99b8a3607": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e3f32-1701-7b33-bb3e-cd1ade96c416",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
