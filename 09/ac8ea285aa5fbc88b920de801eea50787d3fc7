@@ -1,0 +1,19 @@
+supply-chain-guard/references/ci-and-repository-hardening.md
+  s_58b9a99b8a3607::t_9ea1c1774ff097 39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.9",
+  "base_commit_sha": "09ac8ea285aa5fbc88b920de801eea50787d3fc7",
+  "prompts": {},
+  "sessions": {
+    "s_58b9a99b8a3607": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e3f32-1701-7b33-bb3e-cd1ade96c416",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
