@@ -209,23 +209,28 @@ Tool behavior changes quickly. Prefer the tool's current documentation when it d
 
 ## Sources And References
 
-- [Agent Skills: Overview and specification](https://agentskills.io/)
+Skill format and repository instructions:
+
+- [Agent Skills: Overview and specification](https://agentskills.io/home)
 - [AGENTS.md: Open format for guiding coding agents](https://agents.md/)
+
+Agent and editor setup references:
+
 - [Devin Docs: Skills](https://docs.devin.ai/product-guides/skills)
-- [Claude Code Docs: Skills](https://docs.claude.com/en/docs/claude-code/skills)
+- [Claude Code Docs: Skills](https://code.claude.com/docs/en/skills)
 - [Goose Docs: Using skills](https://goose-docs.ai/docs/guides/context-engineering/using-skills/)
-- [GitHub Docs: Repository custom instructions for Copilot](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions)
-- [Cursor Docs: Rules](https://docs.cursor.com/en/context)
+- [GitHub Docs: Repository custom instructions for Copilot](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions)
+- [Cursor Docs: Rules](https://cursor.com/docs/rules)
 - [Windsurf Docs: Rules and AGENTS.md](https://docs.windsurf.com/windsurf/cascade/memories)
 - [Gemini CLI Docs: GEMINI.md context files](https://google-gemini.github.io/gemini-cli/docs/cli/gemini-md.html)
 - [Replit Docs: custom templates and skills](https://docs.replit.com/teams/custom-templates)
 - [JetBrains Docs: Junie guidelines](https://www.jetbrains.com/help/ai-assistant/junie-agent.html)
-- [OpenHands Docs: repository microagents](https://docs.openhands.dev/openhands/usage/microagents/microagents-repo)
-- [Cline Docs: Cline Rules](https://docs.cline.bot/features/cline-rules/overview)
+- [OpenHands Docs: repository skills](https://docs.openhands.dev/overview/skills/repo)
+- [Cline Docs: Cline Rules](https://docs.cline.bot/customization/cline-rules)
 - [Continue Docs: Rules](https://docs.continue.dev/customize/rules)
 - [Kilo Code Docs: rules and AGENTS.md migration](https://kilo.ai/docs/getting-started/migrating)
 - [Aider Docs: conventions files](https://aider.chat/docs/usage/conventions.html)
-- [Qodo Docs: Agent TOML files](https://docs.qodo.ai/qodo-documentation/qodo-gen/agent/agent-toml-file)
+- [Qodo Docs: Agent TOML files](https://docs.qodo.ai/qodo-ide/agent/workflows/agent-toml-file)
 - [Tabnine Docs: Custom commands](https://docs.tabnine.com/main/getting-started/tabnine-cli/features/commands)
 - [Sourcegraph Amp Manual: AGENTS.md](https://ampcode.com/manual)
 - [Factory Docs: Skills](https://docs.factory.ai/cli/configuration/skills)
@@ -234,25 +239,39 @@ Tool behavior changes quickly. Prefer the tool's current documentation when it d
 - [Google Jules Docs: AGENTS.md support](https://jules.google/docs/changelog/2025-06-20/)
 - [Augment Docs: Rules and Guidelines](https://docs.augmentcode.com/setup-augment/guidelines)
 - [Zed Docs: Agent Panel](https://zed.dev/docs/ai/agent-panel)
-- [Warp Docs: Agent Mode](https://docs.warp.dev/agents/warp-ai/agent-mode)
-- [Aikido: Mini Shai-Hulud is back, TanStack and other packages compromised](https://www.aikido.dev/blog/mini-shai-hulud-is-back-tanstack-compromised)
-- [Socket: TanStack npm packages compromised in Mini Shai-Hulud attack](https://socket.dev/blog/tanstack-npm-packages-compromised-mini-shai-hulud-supply-chain-attack)
+- [Warp Docs: Using Agents](https://docs.warp.dev/agent-platform/local-agents/interacting-with-agents/)
+
+Incident case studies:
+
 - [TanStack: npm supply-chain compromise postmortem](https://tanstack.com/blog/npm-supply-chain-compromise-postmortem)
+- [Socket: TanStack npm packages compromised in Mini Shai-Hulud attack](https://socket.dev/blog/tanstack-npm-packages-compromised-mini-shai-hulud-supply-chain-attack)
+- [Aikido: Mini Shai-Hulud is back, TanStack and other packages compromised](https://www.aikido.dev/blog/mini-shai-hulud-is-back-tanstack-compromised)
+- [Socket: Active supply-chain attack compromises AntV packages on npm](https://socket.dev/blog/antv-packages-compromised)
+- [Aikido: Mini Shai-Hulud compromises hundreds of AntV packages](https://www.aikido.dev/blog/mini-shai-hulud-antv-npm-supply-chain-attack)
+
+Supply-chain security guidance:
+
 - [GitHub Well-Architected: Defending against dependency supply chain attacks](https://wellarchitected.github.com/library/application-security/recommendations/managing-dependency-threats/)
 - [GitHub Docs: About supply chain security](https://docs.github.com/en/code-security/concepts/supply-chain-security/about-supply-chain-security)
 - [GitHub Docs: About dependency review](https://docs.github.com/en/code-security/concepts/supply-chain-security/about-dependency-review)
 - [GitHub Docs: Secure use reference for GitHub Actions](https://docs.github.com/en/actions/reference/security/secure-use)
-- [GitHub Docs: Artifact attestations](https://docs.github.com/actions/concepts/security/artifact-attestations)
+- [GitHub Docs: Artifact attestations](https://docs.github.com/en/actions/concepts/security/artifact-attestations)
 - [NIST SSDF SP 800-218 v1.1](https://csrc.nist.gov/pubs/sp/800/218/final)
+
+Package-manager and registry controls:
+
 - [npm Docs: Config](https://docs.npmjs.com/cli/v11/using-npm/config)
 - [npm Docs: Trusted publishing](https://docs.npmjs.com/trusted-publishers/)
 - [pnpm Docs: Settings](https://pnpm.io/settings)
 - [Yarn Docs: Security](https://yarnpkg.com/features/security)
-- [Bun Docs: bun install](https://bun.com/docs/cli/install)
+- [Bun Docs: bun install](https://bun.com/docs/pm/cli/install)
 - [Deno Docs: approve-scripts](https://docs.deno.com/runtime/reference/cli/approve_scripts/)
 - [uv Docs: Settings](https://docs.astral.sh/uv/reference/settings/)
 - [pip Docs: pip install](https://pip.pypa.io/en/stable/cli/pip_install/)
 - [PyPI Docs: Trusted Publishers](https://docs.pypi.org/trusted-publishers/)
+
+Optional scanners and hardening tools:
+
 - [OSV-Scanner](https://github.com/google/osv-scanner)
 - [OpenSSF Scorecard](https://github.com/ossf/scorecard)
 

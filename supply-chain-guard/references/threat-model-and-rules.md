@@ -17,7 +17,7 @@ Supply Chain Guard therefore applies one core idea: treat anything that can intr
 
 ## Lesson 1: Official Packages Can Be Malicious
 
-Recent npm and PyPI incidents show that malicious code can be published under real package names, not just lookalike names. In the TanStack incident on 2026-05-11, malicious versions were published across real `@tanstack/*` packages after a CI/release-path compromise. The reported attack chain involved `pull_request_target`, GitHub Actions cache poisoning, and OIDC token extraction from a runner. The resulting package versions were legitimate registry releases, but the code was malicious.
+Recent npm and PyPI incidents show that malicious code can be published under real package names, not just lookalike names. In the TanStack incident on 2026-05-11, malicious versions were published across real `@tanstack/*` packages after a CI/release-path compromise. The reported attack chain involved `pull_request_target`, GitHub Actions cache poisoning, and OIDC token extraction from a runner. In the AntV wave reported on 2026-05-19, public analyses described hundreds of malicious npm package versions across real `@antv` and related packages tied to a compromised publishing account. In both cases, the resulting package versions were legitimate registry releases, but the code was malicious.
 
 What the skill does because of this:
 
@@ -33,7 +33,7 @@ Human habit to learn: when a popular package has a fresh patch release, do not a
 
 Package installs often run code. JavaScript lifecycle hooks, Python build backends, source distributions, native extension builds, Git dependencies, project generators, and one-shot CLIs can execute before the user ever imports the package.
 
-The TanStack malware described by public analyses executed during install through dependency metadata and lifecycle behavior. Other package compromises have similarly targeted install time because install environments often contain credentials, package-manager tokens, cloud credentials, SSH keys, CI variables, or release permissions.
+The TanStack and AntV malware described by public analyses executed during install through dependency metadata and lifecycle behavior. AntV reporting described a `preinstall` hook that ran a Bun-based payload before the package could be used. Other package compromises have similarly targeted install time because install environments often contain credentials, package-manager tokens, cloud credentials, SSH keys, CI variables, or release permissions.
 
 What the skill does because of this:
 
@@ -123,6 +123,8 @@ Human habit to learn: exceptions should be narrow, named, temporary, and reviewe
 
 Git URLs, tarballs, branch refs, raw HTTP URLs, local paths, binary downloaders, and custom registries often bypass the metadata and review workflows people rely on. They may lack publication timestamps, signatures, provenance, checksums, vulnerability data, or consistent immutability.
 
+The AntV wave also showed why exotic sources matter inside otherwise familiar registry packages: public reports described an injected GitHub dependency such as `@antv/setup` that pointed at a specific repository commit and provided another lifecycle execution path during install.
+
 What the skill does because of this:
 
 - It avoids Git URL, branch, tarball, curl-pipe-shell, and binary-download dependencies by default.
@@ -137,7 +139,7 @@ Human habit to learn: "just use this GitHub URL" is still installing someone els
 
 Development tooling now executes code with access to the user's workspace, shell, environment variables, local credentials, and sometimes browser or cloud sessions. IDE extensions, MCP servers, agent rules, hooks, tasks, and tool permission files can become persistence or exfiltration mechanisms.
 
-Public reporting around Mini Shai-Hulud discussed developer-tool persistence paths such as editor and agent configuration. Separate extension-marketplace incidents have shown that extension dependencies and bundled code can also be abused.
+Public reporting around the AntV Mini Shai-Hulud wave described developer-tool persistence paths such as unexpected VS Code task configuration and Claude Code settings. Separate extension-marketplace incidents have shown that extension dependencies and bundled code can also be abused.
 
 What the skill does because of this:
 
@@ -177,7 +179,7 @@ Human habit to learn: do not install unreviewed dependencies in the same shell o
 
 ## Lesson 12: Incident Response Must Assume Execution Happened
 
-If malicious install-time code may have run, cleanup is not just "remove the package." The environment may have leaked credentials, poisoned caches, produced compromised artifacts, or published new malicious versions.
+If malicious install-time code may have run, cleanup is not just "remove the package." The environment may have leaked credentials, poisoned caches, produced compromised artifacts, persisted through developer-tool configuration, or published new malicious versions.
 
 What the skill does because of this:
 
@@ -215,13 +217,15 @@ Use the skill as a decision checklist, not as a magic scanner.
 
 ## Source Notes
 
-This tutorial is based on the public TanStack postmortem, Socket and Aikido analyses of Mini Shai-Hulud activity, GitHub Actions hardening and artifact-attestation guidance, npm trusted publishing and configuration docs, and the ecosystem package-manager documentation linked from `package-manager-configs.md`.
+This tutorial is based on the public TanStack postmortem, Socket and Aikido analyses of Mini Shai-Hulud activity including the May 2026 AntV wave, GitHub Actions hardening and artifact-attestation guidance, npm trusted publishing and configuration docs, and the ecosystem package-manager documentation linked from `package-manager-configs.md`.
 
 Primary references:
 
 - TanStack postmortem: [TanStack postmortem](https://tanstack.com/blog/npm-supply-chain-compromise-postmortem)
-- Socket analysis: [Socket analysis](https://socket.dev/blog/tanstack-npm-packages-compromised-mini-shai-hulud-supply-chain-attack)
-- Aikido analysis: [Aikido analysis](https://www.aikido.dev/blog/mini-shai-hulud-is-back-tanstack-compromised)
+- Socket TanStack analysis: [Socket TanStack analysis](https://socket.dev/blog/tanstack-npm-packages-compromised-mini-shai-hulud-supply-chain-attack)
+- Aikido TanStack analysis: [Aikido TanStack analysis](https://www.aikido.dev/blog/mini-shai-hulud-is-back-tanstack-compromised)
+- Socket AntV analysis: [Socket AntV analysis](https://socket.dev/blog/antv-packages-compromised)
+- Aikido AntV analysis: [Aikido AntV analysis](https://www.aikido.dev/blog/mini-shai-hulud-antv-npm-supply-chain-attack)
 - GitHub Actions secure use: [GitHub Actions secure use](https://docs.github.com/en/actions/reference/security/secure-use)
 - GitHub artifact attestations: [GitHub artifact attestations](https://docs.github.com/en/actions/concepts/security/artifact-attestations)
 - npm trusted publishing: [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/)
