@@ -1,0 +1,37 @@
+CHANGELOG.md
+  s_58b9a99b8a3607::t_56c1332a2576bc 1-7
+.github/workflows/release.yml
+  s_58b9a99b8a3607::t_56c1332a2576bc 1-69
+examples/review-org-repos.sh
+  s_58b9a99b8a3607::t_36409c9b3c7775 181-185,218-221
+  s_58b9a99b8a3607::t_013e41fcd0a5e1 131-134
+  s_58b9a99b8a3607::t_56c1332a2576bc 1-130,135-180,186-217,222-224
+  s_58b9a99b8a3607::t_bbfdca814564c8 225-229
+CONTRIBUTING.md
+  s_58b9a99b8a3607::t_1e54829f19a95c 20-34
+.github/CODEOWNERS
+  s_58b9a99b8a3607::t_56c1332a2576bc 1-7
+examples/review-org-repos.md
+  s_58b9a99b8a3607::t_56c1332a2576bc 1-39
+README.md
+  s_58b9a99b8a3607::t_1e54829f19a95c 146-153
+  s_58b9a99b8a3607::t_36409c9b3c7775 181-187
+.gitignore
+  s_58b9a99b8a3607::t_0ec15f7ba88f8b 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.9",
+  "base_commit_sha": "53fa85c517f6c66a1eff27d1002fb4889aa13a5e",
+  "prompts": {},
+  "sessions": {
+    "s_58b9a99b8a3607": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e3f32-1701-7b33-bb3e-cd1ade96c416",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
