@@ -1,0 +1,28 @@
+.github/CODEOWNERS
+  s_58b9a99b8a3607::t_56c1332a2576bc 1-7
+CHANGELOG.md
+  s_58b9a99b8a3607::t_56c1332a2576bc 1-6
+  s_58b9a99b8a3607::t_ce8d5d33c072cd 7
+README.md
+  s_58b9a99b8a3607::t_1e54829f19a95c 146-153
+.github/workflows/release.yml
+  s_58b9a99b8a3607::t_56c1332a2576bc 1-69
+CONTRIBUTING.md
+  s_58b9a99b8a3607::t_1e54829f19a95c 20-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.9",
+  "base_commit_sha": "7f2fa302bf88a90749f6d4833b40775afdb10553",
+  "prompts": {},
+  "sessions": {
+    "s_58b9a99b8a3607": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e3f32-1701-7b33-bb3e-cd1ade96c416",
+        "model": "gpt-5.5"
+      },
+      "human_author": null
+    }
+  }
+}
