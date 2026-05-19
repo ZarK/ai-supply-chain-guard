@@ -1,7 +1,6 @@
 ---
 name: supply-chain-guard
 description: Use before installing, updating, auditing, or executing dependencies, package-manager commands, project generators, CI actions/workflows, release jobs, IDE extensions, MCP servers, or AI-agent tools.
-version: 1.0.0
 ---
 
 # Supply Chain Guard

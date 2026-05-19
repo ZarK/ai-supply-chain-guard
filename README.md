@@ -143,6 +143,14 @@ Compatibility choices:
 - There are no hidden installers, binaries, package manifests, or tool-specific runtime dependencies.
 - The root README is for installation and orientation; the skill itself is the `supply-chain-guard/` directory.
 
+## Versioning And Releases
+
+Released versions are Git tags such as `v1.0.0`.
+
+The source `SKILL.md` does not carry an embedded version. This avoids drift between frontmatter and the repository release. To pin an install, use a Git tag or commit SHA instead of a branch name.
+
+Release artifacts package only the installable `supply-chain-guard/` directory and include a SHA-256 checksum.
+
 ## What The Skill Teaches
 
 For the deeper tutorial, read [`supply-chain-guard/references/threat-model-and-rules.md`](supply-chain-guard/references/threat-model-and-rules.md). It explains why the rules exist, including:
@@ -169,6 +177,10 @@ This skill changes agent behavior. It should be paired with real controls where 
 - isolated dev containers, VMs, Codespaces, or short-lived runners for risky dependency work
 
 Use third-party products only when they fit the user's environment, budget, and trust model. This skill is not tied to any vendor.
+
+## Example Prompts
+
+See [`examples/README.md`](examples/README.md) for short prompts covering repository review, dependency review, dependency diffs, CI/release review, incident triage, and a comprehensive full review.
 
 ## Install In Agentic Coding Tools
 
