@@ -143,6 +143,14 @@ Compatibility choices:
 - There are no hidden installers, binaries, package manifests, or tool-specific runtime dependencies.
 - The root README is for installation and orientation; the skill itself is the `supply-chain-guard/` directory.
 
+## Versioning And Releases
+
+Released versions are Git tags such as `v1.0.0`.
+
+The source `SKILL.md` does not carry an embedded version. This avoids drift between frontmatter and the repository release. To pin an install, use a Git tag or commit SHA instead of a branch name.
+
+Release artifacts package only the installable `supply-chain-guard/` directory and include a SHA-256 checksum.
+
 ## What The Skill Teaches
 
 For the deeper tutorial, read [`supply-chain-guard/references/threat-model-and-rules.md`](supply-chain-guard/references/threat-model-and-rules.md). It explains why the rules exist, including:
