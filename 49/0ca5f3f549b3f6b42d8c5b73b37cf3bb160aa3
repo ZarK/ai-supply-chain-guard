@@ -1,0 +1,14 @@
+README.md
+  h_13eab01d19dfa9 13-16,20-22,26,146-149,159-163,170-172
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.9",
+  "base_commit_sha": "490ca5f3f549b3f6b42d8c5b73b37cf3bb160aa3",
+  "prompts": {},
+  "humans": {
+    "h_13eab01d19dfa9": {
+      "author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
