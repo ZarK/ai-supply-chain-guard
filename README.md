@@ -10,6 +10,20 @@ Repository URL:
 https://github.com/ZarK/ai-supply-chain-guard
 ```
 
+## First Use
+
+After installing, read the installed skill and apply it to the current repository:
+
+```text
+Use the supply-chain-guard skill before dependency, package-manager, CI, release, IDE-extension, MCP, or AI-agent-tool work in this repo. First inspect the manifests, lockfiles, workflows, package-manager config, and agent/tooling config. Then report what protections are missing before making changes.
+```
+
+For humans, the shortest instruction to give your agent is:
+
+```text
+Install this skill and use it before dependency or CI work: https://github.com/ZarK/ai-supply-chain-guard
+```
+
 ## Agent Install Contract
 
 You are installing a local agent skill, not a software package.
@@ -129,7 +143,34 @@ Compatibility choices:
 - There are no hidden installers, binaries, package manifests, or tool-specific runtime dependencies.
 - The root README is for installation and orientation; the skill itself is the `supply-chain-guard/` directory.
 
-## Install In 30 Agentic Coding Tools
+## What The Skill Teaches
+
+For the deeper tutorial, read [`supply-chain-guard/references/threat-model-and-rules.md`](supply-chain-guard/references/threat-model-and-rules.md). It explains why the rules exist, including:
+
+- legitimate package releases that briefly ship malicious versions
+- install-time scripts, source builds, generators, and one-shot CLIs as code execution
+- package-age gates and cooldown exceptions for urgent security fixes
+- provenance, trusted publishing, signatures, and attestations as identity/integrity signals rather than malware verdicts
+- GitHub Actions, reusable workflows, cache scopes, artifacts, tags, and release jobs as supply-chain dependencies
+- `pull_request_target`, poisoned caches, mutable action tags, and overbroad OIDC permissions
+- trust downgrade, exotic sources, Git dependencies, tarballs, and registry confusion
+- IDE extensions, MCP servers, AI-agent config, and editor marketplaces as executable supply-chain surfaces
+- incident response when a malicious dependency may have exposed workstation, CI, SCM, registry, or cloud credentials
+
+## Recommended Companion Controls
+
+This skill changes agent behavior. It should be paired with real controls where the user's environment supports them:
+
+- install-time malware blocking, registry proxying, or package intelligence on developer machines and CI runners
+- exact versions, frozen installs, checked-in lockfiles, and lifecycle scripts disabled by default
+- native package-age gates such as npm `min-release-age`, pnpm `minimumReleaseAge`, Yarn `npmMinimalAgeGate`, Bun `minimumReleaseAge`, Deno `minimumDependencyAge`, uv `exclude-newer`, and pip `--uploaded-prior-to`
+- dependency review, vulnerability alerts, code scanning, secret scanning with push protection, signed commits, and repository rulesets
+- trusted publishing, short-lived OIDC credentials, protected release environments, and artifact/provenance verification
+- isolated dev containers, VMs, Codespaces, or short-lived runners for risky dependency work
+
+Use third-party products only when they fit the user's environment, budget, and trust model. This skill is not tied to any vendor.
+
+## Install In Agentic Coding Tools
 
 Tool behavior changes quickly. Prefer the tool's current documentation when it differs from this table. The safest portable pattern is always the same: install `supply-chain-guard/` intact, then add a bridge instruction that points at the installed `SKILL.md`.
 
@@ -165,47 +206,6 @@ Tool behavior changes quickly. Prefer the tool's current documentation when it d
 | Augment Code | Rules or guidelines | Add a rule/guideline with the bridge and keep the full skill in `.agents/skills/`. |
 | Trae | Project rules or `.trae/skills/supply-chain-guard/` if available | Prefer a project rule pointing at `.agents/skills/supply-chain-guard/SKILL.md`. If the client supports skills, copy the folder to its skills directory. |
 | Mistral Vibe | `.vibe/skills/supply-chain-guard/SKILL.md`, `~/.vibe/skills/supply-chain-guard/SKILL.md`, or `AGENTS.md` | Copy the skill folder to Vibe's project or global skills directory and keep a portable bridge for repository context. |
-
-## First Use After Install
-
-After installing, read the installed skill and apply it to the current repository:
-
-```text
-Use the supply-chain-guard skill before dependency, package-manager, CI, release, IDE-extension, MCP, or AI-agent-tool work in this repo. First inspect the manifests, lockfiles, workflows, package-manager config, and agent/tooling config. Then report what protections are missing before making changes.
-```
-
-For humans, the shortest instruction to give your agent is:
-
-```text
-Install this skill and use it before dependency or CI work: https://github.com/ZarK/ai-supply-chain-guard
-```
-
-## What The Skill Teaches
-
-For the deeper tutorial, read [`supply-chain-guard/references/threat-model-and-rules.md`](supply-chain-guard/references/threat-model-and-rules.md). It explains why the rules exist, including:
-
-- legitimate package releases that briefly ship malicious versions
-- install-time scripts, source builds, generators, and one-shot CLIs as code execution
-- package-age gates and cooldown exceptions for urgent security fixes
-- provenance, trusted publishing, signatures, and attestations as identity/integrity signals rather than malware verdicts
-- GitHub Actions, reusable workflows, cache scopes, artifacts, tags, and release jobs as supply-chain dependencies
-- `pull_request_target`, poisoned caches, mutable action tags, and overbroad OIDC permissions
-- trust downgrade, exotic sources, Git dependencies, tarballs, and registry confusion
-- IDE extensions, MCP servers, AI-agent config, and editor marketplaces as executable supply-chain surfaces
-- incident response when a malicious dependency may have exposed workstation, CI, SCM, registry, or cloud credentials
-
-## Recommended Companion Controls
-
-This skill changes agent behavior. It should be paired with real controls where the user's environment supports them:
-
-- install-time malware blocking, registry proxying, or package intelligence on developer machines and CI runners
-- exact versions, frozen installs, checked-in lockfiles, and lifecycle scripts disabled by default
-- native package-age gates such as npm `min-release-age`, pnpm `minimumReleaseAge`, Yarn `npmMinimalAgeGate`, Bun `minimumReleaseAge`, Deno `minimumDependencyAge`, uv `exclude-newer`, and pip `--uploaded-prior-to`
-- dependency review, vulnerability alerts, code scanning, secret scanning with push protection, signed commits, and repository rulesets
-- trusted publishing, short-lived OIDC credentials, protected release environments, and artifact/provenance verification
-- isolated dev containers, VMs, Codespaces, or short-lived runners for risky dependency work
-
-Use third-party products only when they fit the user's environment, budget, and trust model. This skill is not tied to any vendor.
 
 ## Sources And References
 
