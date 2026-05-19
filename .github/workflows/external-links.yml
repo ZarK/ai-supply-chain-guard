@@ -1,0 +1,37 @@
+name: Check External Markdown Links
+
+on:
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  external-links:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+
+      - name: Check external Markdown links
+        uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411
+        with:
+          args: >-
+            --scheme http
+            --scheme https
+            --include-fragments
+            --max-retries 2
+            --timeout 20
+            --verbose
+            --no-progress
+            "**/*.md"
+          fail: true
+          failIfEmpty: true
+          format: markdown
+          jobSummary: true
+          lycheeVersion: v0.23.0
+          output: lychee/external-links.md
