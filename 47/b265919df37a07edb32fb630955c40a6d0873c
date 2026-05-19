@@ -1,0 +1,47 @@
+CHANGELOG.md
+  s_58b9a99b8a3607::t_a92475d3073810 1-7
+.github/workflows/internal-links.yml
+  s_58b9a99b8a3607::t_a322b839610547 18,21
+CONTRIBUTING.md
+  s_58b9a99b8a3607::t_a92475d3073810 20-34
+.github/workflows/external-links.yml
+  s_58b9a99b8a3607::t_a322b839610547 18,21
+.github/CODEOWNERS
+  s_58b9a99b8a3607::t_a92475d3073810 1-7
+README.md
+  s_58b9a99b8a3607::t_a92475d3073810 146-153
+  s_58b9a99b8a3607::t_c702a933e30e4e 181-182,184
+  s_58b9a99b8a3607::t_8aabee8fab8cfc 183
+.github/workflows/lint.yml
+  s_58b9a99b8a3607::t_a322b839610547 13,15,19
+  s_58b9a99b8a3607::t_c36e4b0b0042aa 22
+.github/workflows/release.yml
+  s_58b9a99b8a3607::t_a322b839610547 21
+  s_58b9a99b8a3607::t_f544cabca078d6 42-46
+  s_58b9a99b8a3607::t_642f90818934e8 41
+  s_58b9a99b8a3607::t_a92475d3073810 1-20,22-40,47-75
+examples/README.md
+  s_58b9a99b8a3607::t_8aabee8fab8cfc 1-33,36-39
+  h_13eab01d19dfa9 34-35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.9",
+  "base_commit_sha": "47b265919df37a07edb32fb630955c40a6d0873c",
+  "prompts": {},
+  "humans": {
+    "h_13eab01d19dfa9": {
+      "author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  },
+  "sessions": {
+    "s_58b9a99b8a3607": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e3f32-1701-7b33-bb3e-cd1ade96c416",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
