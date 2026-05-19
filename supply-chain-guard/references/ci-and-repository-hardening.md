@@ -36,6 +36,7 @@ Use this reference when asked to harden a repository, CI pipeline, release workf
 - Use environment protection rules for production deploys and package publishing.
 - Avoid `pull_request_target` or equivalent privileged fork events for workflows that check out, install, build, cache, or execute untrusted code. If unavoidable, do not check out the pull request head/merge ref, do not run package-manager commands, do not restore shared caches, and grant no write token or OIDC permission.
 - Pin third-party actions and reusable workflows to full-length commit SHAs. A tag or branch is mutable and should be reviewed like a floating dependency version.
+- When pinning GitHub Actions by SHA, keep a same-line comment with the reviewed upstream version tag, for example `owner/action@<full-sha> # v1.2.3`, so humans and update tools can understand the intended release while the executable ref stays immutable.
 - Avoid persistent self-hosted runners for untrusted code. Use ephemeral runners or isolated job environments.
 - Clear package-manager caches after confirmed compromise and avoid sharing writable caches between trusted and untrusted jobs.
 
