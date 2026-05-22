@@ -16,6 +16,8 @@ Where supported, enforce the 7-day/14-day age policy in package-manager configur
 
 Cooldowns can delay urgent vulnerability fixes. Use the security-fix exception path from `SKILL.md` instead of globally lowering gates.
 
+Native age gates are most useful when they are checked into the repository. User-global config helps one workstation, but agents and CI should first look for project policy in the package manager's project config and propose adding it when absent.
+
 ## npm
 
 Project `.npmrc`:
@@ -34,6 +36,8 @@ Use `min-release-age=14` for high-risk runtime, CI/CD, auth, crypto, networking,
 Use `npm ci --ignore-scripts` for existing projects. If lifecycle scripts are required, review them first and run the narrowest trusted rebuild command. Run `npm audit signatures` where supported to verify registry signatures and provenance attestations for installed packages.
 
 ## pnpm
+
+pnpm reads non-auth settings from `pnpm-workspace.yaml` or global `~/.config/pnpm/config.yaml`; `.npmrc` is only for auth and registry settings. For repositories, prefer checked-in root `pnpm-workspace.yaml` policy so every agent, developer, and CI job gets the same behavior.
 
 Project `pnpm-workspace.yaml`:
 
@@ -61,9 +65,9 @@ pnpm install --frozen-lockfile --ignore-scripts
 pnpm approve-builds
 ```
 
-Review lifecycle/build scripts with `pnpm approve-builds` and commit reviewed `allowBuilds` decisions in `pnpm-workspace.yaml`. Do not enable `dangerouslyAllowAllBuilds` for normal projects.
+Review lifecycle/build scripts with `pnpm approve-builds` and commit reviewed `allowBuilds` decisions in `pnpm-workspace.yaml`. In pnpm v11, `allowBuilds` replaces older script-approval settings such as `onlyBuiltDependencies`, `neverBuiltDependencies`, `ignoredBuiltDependencies`, and `ignoreDepScripts`. Do not enable `dangerouslyAllowAllBuilds` for normal projects.
 
-Review `pnpm-workspace.yaml`, `.pnpmfile.cjs`, `patches/`, overrides, catalog entries, exotic sources, and registry aliases.
+Review `minimumReleaseAgeExclude`, `trustPolicyExclude`, `allowBuilds`, `registries`, `namedRegistries`, `pnpm-workspace.yaml`, `.pnpmfile.cjs`, `patches/`, overrides, catalog entries, exotic sources, and registry aliases.
 
 ## Yarn Berry
 
