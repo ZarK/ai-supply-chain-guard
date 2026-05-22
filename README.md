@@ -130,6 +130,7 @@ supply-chain-guard/
     |-- ci-and-repository-hardening.md
     |-- ecosystem-playbooks.md
     |-- incident-response.md
+    |-- npm-trusted-publishing.md
     |-- package-manager-configs.md
     |-- threat-model-and-rules.md
     `-- tooling.md
@@ -161,6 +162,7 @@ For the deeper tutorial, read [`supply-chain-guard/references/threat-model-and-r
 - provenance, trusted publishing, signatures, and attestations as identity/integrity signals rather than malware verdicts
 - GitHub Actions, reusable workflows, cache scopes, artifacts, tags, and release jobs as supply-chain dependencies
 - `pull_request_target`, poisoned caches, mutable action tags, and overbroad OIDC permissions
+- npm Trusted Publishing, staged publishing, exact identity matching, safe release diagnostics, and package bootstrap flows
 - trust downgrade, exotic sources, Git dependencies, tarballs, and registry confusion
 - IDE extensions, MCP servers, AI-agent config, and editor marketplaces as executable supply-chain surfaces
 - incident response when a malicious dependency may have exposed workstation, CI, SCM, registry, or cloud credentials

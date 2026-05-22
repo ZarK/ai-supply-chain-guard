@@ -63,6 +63,7 @@ Use this reference when asked to harden a repository, CI pipeline, release workf
 - Require human approval or protected environments before publishing packages and production artifacts.
 - Prefer trusted publishing/OIDC over long-lived registry automation tokens, with OIDC permission granted only to the publish job.
 - For npm publishing, prefer trusted publishing where available, require 2FA and disallow legacy publish tokens after migration where feasible, and disable package-manager caches in publish jobs unless there is a documented reason.
+- For npm Trusted Publishing and staged publishing, load `npm-trusted-publishing.md` before changing release authentication, workflow identity, package identity, staged approval, or diagnostics.
 - For PyPI publishing, prefer Trusted Publishers, job-level `id-token: write`, protected environments, and default digital attestations from the official publishing flow where available.
 - Verify package contents before publishing: no secrets, unexpected generated files, test fixtures with credentials, or local config files.
 - Generate SBOMs for release artifacts where useful and attach them to releases.
