@@ -192,6 +192,45 @@ What the skill does because of this:
 
 Human habit to learn: package compromise response is closer to incident response than dependency cleanup.
 
+## Lesson 13: AI Artifacts Are Dependencies
+
+Models, datasets, tokenizers, embeddings, adapters, fine-tunes, prompt templates, and RAG sources can change application behavior as much as code dependencies. Some artifact formats and loader flags can execute code during loading; other artifacts poison behavior through labels, prompts, retrieval content, templates, or hidden instructions.
+
+What the skill does because of this:
+
+- It treats AI/ML artifact downloads and loading paths as supply-chain work.
+- It prefers official sources, immutable revisions, published hashes, and safer formats such as `safetensors` or plain data formats.
+- It treats Pickle-like deserialization, `torch.hub`, PyTorch checkpoint loading, custom loader code, and `trust_remote_code=True` as high-risk execution paths.
+- It requires source and hash documentation for artifacts that become part of reproducible workflows.
+- It treats RAG corpora, embeddings, prompts, and templates as poisoning surfaces, not just passive data.
+
+Human habit to learn: "download a model" is not a harmless data fetch. Ask who published it, what files will load, whether loading executes code, and how the artifact can influence behavior.
+
+## Lesson 14: Deployment Artifacts Are Dependencies
+
+Container images, IaC modules, Helm charts, Kubernetes manifests, Ansible roles, vendored code, submodules, Git LFS objects, and release assets can bypass ordinary package-manager review. They often carry build tools, OS packages, cloud permissions, deployment hooks, or binary payloads.
+
+What the skill does because of this:
+
+- It treats Dockerfiles, base images, OCI artifacts, IaC modules, charts, roles, submodules, vendored directories, and binary archives as dependencies.
+- It prefers immutable image digests, exact module/chart versions, full Git commit SHAs, and verified hashes.
+- It flags tag-only image refs, `curl | sh`, unverified binary downloads, added OS repositories, external IaC data sources, provisioners, deployment hooks, broad IAM, and privileged Kubernetes settings.
+- It reviews vendored and generated code as dependency updates with source, generator version, license, and diff provenance.
+
+Human habit to learn: a one-line `FROM`, `module source`, or `.gitmodules` change can change the code and permissions that production actually runs.
+
+## Lesson 15: Generated Code Can Introduce Supply-Chain Risk
+
+Agents and generators can create code that quietly fetches dependencies at runtime, executes dynamic strings, loads remote plugins, or hides behavior in encoded blobs and confusable Unicode. Even when no manifest changes, the generated code can create a new supply-chain channel.
+
+What the skill does because of this:
+
+- It reviews generated code for runtime dependency fetching, dynamic `eval`/`Function`, shell command construction, remote model/plugin loading, obfuscated strings, base64 payloads, and hidden Unicode.
+- It treats new code generation tools and generated SDKs as dependencies.
+- It prefers explicit, pinned, reviewable sources over runtime fetches or opaque blobs.
+
+Human habit to learn: "the agent wrote it" is not a trust boundary. Generated code needs the same supply-chain review as handwritten code when it can fetch or execute external content.
+
 ## How an Agent Should Apply These Lessons
 
 When dependency or tooling work starts, the agent should:
@@ -201,8 +240,9 @@ When dependency or tooling work starts, the agent should:
 3. If a dependency is needed, select an exact version and verify age, source, metadata, maintainers, provenance, scripts, binaries, and lockfile impact before install.
 4. Use frozen/locked installs and lifecycle-script suppression by default.
 5. Review all CI action and reusable workflow refs like dependency refs.
-6. Keep untrusted PR code, mutable caches, artifacts, and package-manager stores away from release and publish jobs.
-7. Escalate when the safe answer depends on user approval, credential rotation, destructive cleanup, or a security-fix exception.
+6. Review AI/ML artifacts, containers, IaC modules, vendored code, submodules, and Git LFS objects like dependency refs.
+7. Keep untrusted PR code, mutable caches, artifacts, and package-manager stores away from release and publish jobs.
+8. Escalate when the safe answer depends on user approval, credential rotation, destructive cleanup, or a security-fix exception.
 
 ## How a Human Should Use the Skill
 

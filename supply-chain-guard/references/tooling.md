@@ -23,6 +23,8 @@ Use more than one data source when the risk justifies it:
 
 Treat scanner output as input to review, not an automatic fix instruction. Do not run broad update commands just because a scanner reports a vulnerability.
 
+When a scanner supports transitive dependency or lockfile review, summarize the affected package, version, dependency path, advisory ID, exploitability in this project, and whether the proposed fix violates the package-age policy.
+
 ## First-party trust and provenance checks
 
 - npm: use `npm audit signatures` where supported to verify registry signatures and provenance attestations for installed packages.
@@ -64,6 +66,8 @@ When asked for release or deployment hardening:
 - Generate SBOMs with tools such as Syft, CycloneDX generators, package-manager-native export commands, or platform-native SBOM export.
 - Scan containers and filesystems with tools such as Trivy, Grype, or equivalent scanners already used by the project.
 - Compare SBOMs across releases to detect unexpected dependency additions.
+- Include container images, OS packages, vendored code, submodules, direct binary downloads, and AI/ML artifacts in the inventory when they affect runtime or reproducibility.
+- Record immutable identifiers such as image digests, Git commits, LFS object IDs, model revisions, and SHA-256 hashes alongside package versions where the SBOM format does not capture them cleanly.
 
 ## Running tools safely
 

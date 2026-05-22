@@ -10,9 +10,10 @@ description: Use before installing, updating, auditing, or executing dependencie
 - Prefer existing code / stdlib over new dependencies
 - Use exact versions + preserve lockfiles
 - Enforce 7-day (14-day for high-risk) package age gate
+- Prefer durable per-project package-manager config, especially pnpm settings in `pnpm-workspace.yaml`
 - Disable lifecycle scripts by default (`--ignore-scripts`)
 - Verify provenance, signatures, source repo, and builder
-- Treat package-manager commands, generators, CI actions, IDE extensions, MCP tools as code execution
+- Treat package-manager commands, generators, model/dataset loading, container images, IaC modules, CI actions, IDE extensions, MCP tools as code execution
 - Isolate risky installs
 - Stop for human approval on high-risk or ambiguous cases
 - Follow incident response playbook if exposure suspected
@@ -26,17 +27,19 @@ This skill is a policy and workflow layer. It does not replace package-manager c
 Keep this file active for every dependency-related task. Load these references only when the task needs their detail:
 
 - `references/ecosystem-playbooks.md`: exact safe commands, lockfile rules, and package-age metadata by ecosystem.
+- `references/ai-ml-artifacts.md`: model, dataset, embedding, fine-tune, LoRA/adapter, and RAG source intake checks.
 - `references/threat-model-and-rules.md`: tutorial explaining the attack classes behind the rules and why the skill is strict.
 - `references/attack-patterns.md`: compromise indicators and suspicious dependency patterns to search for.
 - `references/incident-response.md`: suspected compromise triage, containment, token rotation, and recovery.
 - `references/ci-and-repository-hardening.md`: repository rules, CI permissions, dependency review, secret scanning, and release hardening.
 - `references/package-manager-configs.md`: durable secure defaults for common package managers.
+- `references/containers-iac-and-repo-sources.md`: container/OCI image, IaC module/chart, submodule, vendored code, and Git/LFS review checks.
 - `references/tooling.md`: optional scanners and guards such as install-time blockers, OSV-Scanner, OpenSSF Scorecard, SBOM tools, and container scanners.
 
 ## Non-negotiable defaults
 
 - Prefer the standard library, existing dependencies, or in-repo code over adding a package.
-- Treat every package provider and transport the same: npm, npx, pnpm, pnpm dlx, Yarn Classic, Yarn Berry, yarn dlx, Corepack, Bun, bunx, Deno, JSR, uv, pip, pip-tools, pipenv, poetry, hatch, rye, conda, cargo, go modules, Maven, Gradle, Kotlin DSL, NuGet, Paket, CocoaPods, Carthage, Swift Package Manager, Homebrew, MacPorts, Nix, Chocolatey, winget, Scoop, MSIX/App Installer, PowerShell Gallery, vcpkg, Git URLs, tarballs, container images, IDE/editor extensions, browser extensions used for development, MCP servers, AI-agent tools, and project generators.
+- Treat every package provider and transport the same: npm, npx, pnpm, pnpm dlx, Yarn Classic, Yarn Berry, yarn dlx, Corepack, Bun, bunx, Deno, JSR, uv, pip, pip-tools, pipenv, poetry, hatch, rye, conda, cargo, go modules, Maven, Gradle, Kotlin DSL, NuGet, Paket, CocoaPods, Carthage, Swift Package Manager, Homebrew, MacPorts, Nix, Chocolatey, winget, Scoop, MSIX/App Installer, PowerShell Gallery, vcpkg, Git URLs, tarballs, container images, model/dataset/embedding artifacts, LoRAs/adapters/fine-tunes, RAG data sources, IaC modules/charts/roles, vendored code, submodules, Git LFS objects, IDE/editor extensions, browser extensions used for development, MCP servers, AI-agent tools, and project generators.
 - Treat CI actions, reusable workflows, workflow templates, build caches, build artifacts, and release automation as dependencies. Pin third-party actions and reusable workflows to immutable full-length commit SHAs where the platform supports it; review tag or branch references like floating package versions.
 - Never install `latest`, floating ranges, unpinned Git branches, or unverified tarballs for new dependencies.
 - Pin exact versions and preserve/update the lockfile intentionally.
@@ -44,6 +47,8 @@ Keep this file active for every dependency-related task. Load these references o
 - Never run dependency lifecycle/build scripts from newly introduced packages until the package/version has passed the checks below. Use `--ignore-scripts` or the package-manager equivalent when available.
 - Treat package-manager commands, project generators, and one-line installers as code execution. Do not run them from an untrusted working directory or with broad credentials present.
 - Treat signatures, provenance, trusted publishing, and attestations as identity and integrity signals, not proof that code is safe. Verify the expected repository, workflow, ref, environment, builder, and artifact digest, then still inspect dependency, workflow, cache, and release behavior.
+- Treat AI/ML artifact loading as code or data execution when formats, loaders, preprocessors, tokenizers, templates, or pipelines can deserialize objects, run custom code, fetch remote files, or influence model behavior. Prefer verified `safetensors` and plain data formats over pickle-like formats.
+- Treat Dockerfiles, base images, Helm charts, Terraform/OpenTofu modules, Kubernetes manifests, Ansible roles, submodules, vendored directories, and Git LFS pointers as dependency surfaces that need pinning, source verification, and review.
 
 ## Recommended machine hardening
 
@@ -62,6 +67,7 @@ When helping a user set up a workstation or CI runner, recommend layered control
 - Default minimum age for any newly introduced package version: **7 full days since publication/upload/release**. This is an organization policy and may be stricter than package-manager defaults.
 - Prefer **14 days** for runtime, privileged, build-tooling, CI/CD, auth, crypto, networking, installer, postinstall, native binary, or transitive-heavy packages.
 - Where supported, enforce this policy with native package-manager age gates as well as manual review. Load `references/package-manager-configs.md` for current configuration examples.
+- For pnpm, do not rely on `.npmrc` for non-auth security settings. Put project/workspace policy such as `minimumReleaseAge`, `minimumReleaseAgeStrict`, `trustPolicy`, `blockExoticSubdeps`, `strictDepBuilds`, `verifyDepsBeforeRun`, and `savePrefix` in the repository's root `pnpm-workspace.yaml` when the pinned pnpm version supports them.
 - If a package is younger than the required delay, choose an older compatible version that satisfies the requirement.
 - If no compatible version satisfies the delay, do not install it automatically. Explain the block and request explicit user approval before proceeding.
 - If publication time cannot be verified from registry/API metadata, treat the package as untrusted and do not install it automatically.
@@ -82,6 +88,8 @@ Before adding or upgrading any dependency, verify and document the result in you
 6. **Integrity:** lockfile hashes/checksums/signatures/provenance are preserved or verified when the ecosystem supports them.
 7. **Scope:** dependency is added to the narrowest correct scope (`dev`, optional, workspace package, extras group, etc.).
 
+For AI/ML artifacts, containers, IaC modules, vendored code, submodules, Git LFS objects, or other non-registry artifacts, adapt the same checklist: identify the exact source, immutable ref or digest, artifact hash, release age, loader/build behavior, transitive fetches, and documented provenance before use.
+
 ## Active incident workflow
 
 When the user asks about a named attack, compromised package set, malware campaign, or suspicious dependency:
@@ -99,7 +107,7 @@ For concrete search patterns, containment, and recovery steps, load `references/
 For normal installs in existing projects, avoid dependency graph changes:
 
 - npm: prefer `npm ci --ignore-scripts`; only use `npm install` when intentionally updating the lockfile.
-- pnpm: prefer `pnpm install --frozen-lockfile --ignore-scripts`.
+- pnpm: prefer `pnpm install --frozen-lockfile --ignore-scripts`; before running, check whether root `pnpm-workspace.yaml` carries the repository policy from `references/package-manager-configs.md`, because pnpm project settings do not belong in `.npmrc` except auth/registry settings.
 - Yarn Classic: prefer `yarn install --frozen-lockfile --ignore-scripts`; do not run `yarn upgrade` unless intentionally updating.
 - Yarn Berry/Modern: prefer `yarn install --immutable --immutable-cache --check-cache`; keep `.yarnrc.yml`, `.pnp.cjs`, `.yarn/cache`, and `yarn.lock` changes intentional.
 - Corepack: do not auto-activate a floating package-manager version; respect the pinned `packageManager` field or pin Corepack-prepared versions explicitly.
@@ -121,6 +129,7 @@ If scripts are required for a known trusted package already in the lockfile, run
 When allowed to update project configuration, prefer durable defaults over relying on every command being remembered:
 
 - npm project `.npmrc`: `ignore-scripts=true` and `save-exact=true` unless the project has documented exceptions.
+- pnpm project `pnpm-workspace.yaml`: enforce package-age, strict build approval, trust downgrade, exotic subdependency blocking, stale `node_modules` failures, and exact save prefixes where the pinned pnpm version supports those settings. Load `references/package-manager-configs.md` for the current snippet; global config is useful but not a substitute for checked-in project policy.
 - Yarn Berry `.yarnrc.yml`: `enableScripts: false`, `enableImmutableInstalls: true`, and exact semver prefix policy.
 - GitHub Actions and other CI: install with scripts disabled by default, use least-privilege tokens, avoid exposing secrets to pull requests, and require dependency/security checks before merge.
 - Commit documented exceptions for packages that truly need lifecycle scripts; rebuild only those packages after review.
@@ -132,6 +141,7 @@ When allowed to update project configuration, prefer durable defaults over relyi
 - Install exact versions only, e.g. npm/pnpm/bun `pkg@x.y.z`, uv/pip `pkg==x.y.z`, NuGet `PackageReference Version="x.y.z"`, Maven/Gradle `group:artifact:x.y.z`, CocoaPods `pod 'Name', 'x.y.z'`, SPM/Carthage resolved commits/tags, Homebrew bundle pins or versioned formulae where available, winget/Chocolatey/Scoop/PowerShell Gallery explicit versions where supported, cargo `crate@x.y.z`, Go module version tags, image digests.
 - Use package-manager flags that reduce surprise where available: `--save-exact`, `--ignore-scripts`, frozen/locked mode, offline/cache verification, signatures/provenance/audit commands.
 - Re-run lockfile-aware install/test/build after changes and inspect unexpected transitive additions.
+- For AI/ML models, datasets, fine-tunes, embeddings, LoRAs/adapters, or RAG sources, prefer official repositories, immutable revisions, published hashes, and safe formats; document the source and SHA-256 before loading or committing references.
 
 ## Baseline review records
 
@@ -144,6 +154,7 @@ When allowed to update project configuration, prefer durable defaults over relyi
 
 - Avoid Git URL, branch, tarball, curl-pipe-shell, and binary-download dependencies. If unavoidable, pin to an immutable commit or digest and verify provenance.
 - Avoid packages with recent ownership transfer, sudden maintainer expansion, unusual postinstall scripts, obfuscated/minified source in source packages, or metadata/repository mismatch.
+- Avoid generated or modified code that introduces runtime dependency fetching, dynamic `eval`/`Function`, shell command construction, opaque base64 blobs, hidden Unicode, or remote model/plugin loading without explicit review.
 - For CLIs and project generators (`npm create`, `npx`, `pnpm dlx`, `yarn dlx`, `bunx`, `deno run`, `uvx`, `pipx`, `dotnet tool install`, `mvn archetype:generate`, `gradle init`, `cargo install`, `brew install`, `choco install`, `winget install`, `scoop install`, `Install-Module`, `vcpkg install`, etc.), apply the same age, pinning, and script-execution rules before running generated code.
 
 ## When blocked

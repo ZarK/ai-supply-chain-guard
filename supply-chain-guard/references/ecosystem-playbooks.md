@@ -11,6 +11,7 @@ Use this reference when a task touches a specific package manager, lockfile, pro
 5. Prefer an older compatible version if the newest version fails the package-age policy.
 6. Use native age gates, script approvals, trust policy, and provenance checks where the pinned package-manager version supports them.
 7. Review lockfile diffs for unexpected transitive additions, source changes, Git/tarball URLs, script-bearing packages, and registry changes.
+8. Treat non-package artifacts such as container images, IaC modules, models, datasets, vendored code, submodules, and Git LFS objects as dependencies with the same pinning, age, provenance, and execution-risk review.
 
 ## JavaScript and TypeScript
 
@@ -35,6 +36,25 @@ Before adding packages:
 - Treat `npx`, `npm create`, `pnpm dlx`, `yarn dlx`, `bunx`, `deno run`, and generator templates as code execution. Pin exact package versions or immutable URLs before use.
 - Inspect `scripts`, `bin`, `optionalDependencies`, `peerDependenciesMeta`, `install`, `postinstall`, `preinstall`, `prepare`, and native binary download paths.
 - Watch lockfiles for registry host changes, tarball URL changes, integrity changes without version changes, and newly introduced Git dependencies.
+
+### pnpm project policy
+
+For pnpm v10.16+ and especially pnpm v11, prefer checked-in project policy in the workspace root `pnpm-workspace.yaml`. Global pnpm config can protect one machine, but it does not travel with the repository and should not be treated as enough for CI or other agents.
+
+Recommended baseline for ordinary repositories:
+
+```yaml
+minimumReleaseAge: 10080
+minimumReleaseAgeIgnoreMissingTime: false
+minimumReleaseAgeStrict: true
+trustPolicy: no-downgrade
+blockExoticSubdeps: true
+strictDepBuilds: true
+verifyDepsBeforeRun: error
+savePrefix: ""
+```
+
+For high-risk repositories, use `minimumReleaseAge: 20160`. Review and commit `allowBuilds` entries only after inspecting the package and build script. Do not use `dangerouslyAllowAllBuilds` for normal projects. Review `minimumReleaseAgeExclude`, `trustPolicyExclude`, `allowBuilds`, `registries`, `namedRegistries`, `.pnpmfile.cjs`, `patches/`, overrides, and catalog entries as security-relevant config.
 
 ## Python
 
@@ -164,6 +184,38 @@ Safe defaults:
 - Do not let untrusted pull request jobs write caches or artifacts that privileged release/deploy jobs later restore.
 - Prefer clean release installs from reviewed lockfiles over restored mutable caches.
 - Use OIDC/trusted publishing with protected environments and tightly scoped publish jobs, but do not treat valid provenance as proof the workflow was safe.
+
+## AI/ML artifacts and RAG sources
+
+Detect: Hugging Face model/dataset references, `transformers`, `diffusers`, `sentence-transformers`, `torch.hub`, `keras`, `tensorflow`, `mlflow`, `ollama`, `llama.cpp`, GGUF/GGML files, LoRA/adapters, tokenizer/template files, vector-store snapshots, embedding corpora, and scripts that download models or data at runtime.
+
+Safe defaults:
+
+- Prefer official publisher repositories, immutable revisions or release tags, and documented checksums.
+- Prefer `safetensors`, GGUF, JSONL, Parquet, CSV, Arrow, or other formats that do not require arbitrary object deserialization. Treat Pickle, PyTorch `.pt`/`.pth` checkpoints, NumPy object arrays, custom loader code, and `trust_remote_code=True` as high risk.
+- Do not download or load unverified models, datasets, adapters, tokenizers, prompts, templates, or RAG corpora in a credentialed environment.
+- Pin exact model/dataset revisions and record source URL, revision, license, expected file list, and SHA-256 for fetched artifacts.
+- Treat unverified LoRAs, adapters, fine-tunes, embeddings, and user-provided RAG documents as data-poisoning risks even when the file format is not executable.
+
+Before adding or loading artifacts:
+
+- Review model/dataset cards, publisher history, license, safety notes, training-data provenance, and recent ownership or repository changes.
+- Compare published hashes or compute SHA-256 in an isolated environment before moving artifacts into trusted workflows.
+- Inspect loader flags and code paths for remote code execution, unsafe deserialization, dynamic imports, network fetches, credential reads, and shell execution.
+- Document the exact source and hash in the PR, changelog, or working summary when the artifact becomes part of a reproducible workflow.
+
+## Containers, IaC, vendored code, and Git sources
+
+Detect: `Dockerfile`, `Containerfile`, `docker-compose.yml`, `compose.yaml`, `helmfile.yaml`, Helm charts, Kustomize overlays, Kubernetes manifests, Terraform/OpenTofu modules, Terragrunt config, Pulumi packages, Ansible roles/collections, Git submodules, Git LFS pointers, `vendor/`, checked-in third-party source, and binary archives.
+
+Safe defaults:
+
+- Pin container base images and OCI artifacts by digest where practical; tag-only references such as `latest`, `main`, or `stable` are mutable.
+- Prefer official, minimal, maintained base images and verify signatures/attestations where the publisher supports them.
+- Treat `RUN curl ... | sh`, downloaded installers, added apt/apk/yum repositories, imported GPG keys, and copied binaries as dependency additions.
+- Pin IaC modules, Helm charts, Ansible collections, and Pulumi packages to immutable versions, commits, or digests.
+- Review broad IAM/cloud permissions, external data sources, remote chart repositories, post-renderers, hooks, init containers, admission webhooks, and dynamic template execution.
+- Treat submodules, vendored directories, Git LFS objects, and generated third-party code as package dependencies. Verify source repository, immutable commit or object ID, license, and update path.
 
 ## IDE extensions, MCP servers, and AI-agent tooling
 

@@ -6,7 +6,7 @@ Use this reference when asked to harden a repository, CI pipeline, release workf
 
 - Require pull requests before merge and protect default and release branches.
 - Require status checks that include tests, dependency review, secret scanning or equivalent, and relevant code scanning.
-- Require review from code owners for dependency manifests, lockfiles, CI workflows, release scripts, package-manager config, and infrastructure credentials.
+- Require review from code owners for dependency manifests, lockfiles, CI workflows, release scripts, package-manager config, AI/ML artifact references, container/IaC config, vendored code, submodules, and infrastructure credentials.
 - Require signed commits or verified branch rules where practical.
 - Prevent force pushes and branch deletion on protected branches.
 - Restrict who can edit workflows, environments, deploy keys, webhooks, package settings, and release jobs.
@@ -15,7 +15,7 @@ Use this reference when asked to harden a repository, CI pipeline, release workf
 ## Dependency controls
 
 - Enable dependency inventory, vulnerability alerts, malware alerts where available, and dependency review for pull requests.
-- Require dependency review as a PR gate for manifests, lockfiles, CI workflow files, reusable workflow references, third-party actions, container build definitions, and package-manager config.
+- Require dependency review as a PR gate for manifests, lockfiles, CI workflow files, reusable workflow references, third-party actions, container build definitions, IaC modules/charts, AI/ML artifact references, vendored code, submodules, and package-manager config.
 - Require lockfile changes to be included with manifest changes.
 - Block dependency changes that introduce unpinned versions, mutable URLs, untrusted registries, mutable CI action refs, reusable workflow refs, or lifecycle scripts without review.
 - Prefer automated dependency update PRs that are small, grouped by ecosystem/risk, and reviewed before merge.
@@ -66,6 +66,7 @@ Use this reference when asked to harden a repository, CI pipeline, release workf
 - For PyPI publishing, prefer Trusted Publishers, job-level `id-token: write`, protected environments, and default digital attestations from the official publishing flow where available.
 - Verify package contents before publishing: no secrets, unexpected generated files, test fixtures with credentials, or local config files.
 - Generate SBOMs for release artifacts where useful and attach them to releases.
+- Include container images, IaC packages, vendored code, and AI/ML artifacts in release inventory or SBOM-style records where they affect reproducibility or deployment risk.
 
 ## Pull request review checklist
 
@@ -78,4 +79,5 @@ For every dependency or CI change, answer:
 - Are third-party actions and reusable workflows pinned to immutable refs?
 - Is provenance valid for the expected workflow/ref/environment, and is the release path itself trustworthy?
 - Are versions pinned and old enough under the package-age policy?
+- Are model/dataset/RAG sources, container images, IaC modules, vendored code, submodules, and Git LFS objects pinned to immutable refs or digests with hashes where practical?
 - Can the same result be achieved with an existing dependency or standard library?

@@ -20,6 +20,8 @@ Use this reference when reviewing a dependency change, investigating a named cam
 - Privileged release jobs restoring caches or artifacts created by pull request workflows.
 - Package-manager-native warnings about blocked young versions, unreviewed build scripts, trust downgrades, ignored builds, or exotic sources.
 - Age-gate or script-approval bypass lists growing without documented review.
+- New model, dataset, tokenizer, adapter, prompt-template, vector-store, or RAG source references without immutable revisions and hashes.
+- Container image tags, IaC modules, Helm charts, submodules, Git LFS objects, or vendored code changing without a reviewed immutable source.
 
 ## JavaScript-specific checks
 
@@ -38,6 +40,22 @@ rg -n '"(preinstall|install|postinstall|prepare|prepack|postpack)"|optionalDepen
 rg -n 'git\\+|github:|https?:|file:|link:|patch:|portal:' package.json package-lock.json pnpm-lock.yaml yarn.lock bun.lockb
 rg -n 'process\\.env|\\.npmrc|GITHUB_TOKEN|NPM_TOKEN|AWS_|AZURE_|GOOGLE_|KUBECONFIG|id_rsa|\\.ssh|child_process|exec\\(|spawn\\(|eval\\(|Function\\(' .
 rg -n 'minimumReleaseAgeExclude|minimumReleaseAgeExcludes|npmPreapprovedPackages|trustPolicyExclude|allowBuilds|trustedDependencies|allowScripts' package.json pnpm-workspace.yaml .yarnrc.yml bunfig.toml deno.json
+```
+
+## AI/ML artifact checks
+
+Review:
+
+- New model, dataset, tokenizer, prompt template, embedding, vector-store, LoRA/adapter, fine-tune, benchmark, or RAG source references.
+- Unsafe deserialization or remote code loading paths, especially Pickle, PyTorch checkpoint loading, NumPy object arrays, custom Keras/TensorFlow objects, `torch.hub`, and `trust_remote_code=True`.
+- Runtime model/data downloads from mutable URLs, branches, buckets, or personal forks.
+- Prompt templates, chat templates, tool schemas, or retrieved documents that can inject tool-use instructions or leak secrets.
+
+Useful local searches:
+
+```sh
+rg -n 'trust_remote_code|from_pretrained|snapshot_download|hf_hub_download|torch\\.hub|torch\\.load|pickle\\.load|joblib\\.load|load_model|gguf|safetensors' .
+rg -n 'prompt|template|system_message|tool_schema|retriever|vectorstore|embedding|fine[-_ ]?tune|lora|adapter|dataset|jsonl|parquet|arrow' .
 ```
 
 ## Python-specific checks
@@ -78,6 +96,23 @@ rg -n 'uses:\\s*[^#\\n]+@((main|master|HEAD|latest|v?[0-9]+(\\.[0-9]+){0,2})\\b|
 rg -n 'jobs\\.[A-Za-z0-9_-]+\\.uses|uses:\\s*[^\\s]+/.github/workflows/.+@' .github/workflows
 rg -n 'actions/cache|cache:|restore-keys|upload-artifact|download-artifact|package-manager-cache' .github/workflows
 rg -n 'curl .*\\|.*(sh|bash)|wget .*\\|.*(sh|bash)|Invoke-WebRequest|iwr |iex |Set-ExecutionPolicy' .
+```
+
+## Containers, IaC, and repository-source checks
+
+Review:
+
+- `FROM` image references, CI job images, Helm/Kubernetes image values, and base image tag or digest changes.
+- `RUN curl`, `RUN wget`, `ADD https://`, binary downloads, OS package repository additions, and GPG key imports.
+- Terraform/OpenTofu modules, Helm charts, Ansible roles, Pulumi packages, external data sources, provisioners, hooks, post-renderers, and deployment permissions.
+- `.gitmodules`, Git URL dependencies, vendored directories, generated SDKs, Git LFS pointer changes, and checked-in binary archives.
+
+Useful local searches:
+
+```sh
+rg -n 'FROM\\s+[^\\s]+:(latest|stable|edge|nightly|main|master)|FROM\\s+[^\\s@]+$|curl .*\\|.*(sh|bash)|wget .*\\|.*(sh|bash)|ADD\\s+https?://' Dockerfile Containerfile '**/Dockerfile' '**/Containerfile'
+rg -n 'image:\\s*[^\\s@]+:(latest|stable|edge|nightly|main|master)|hostPath|privileged:\\s*true|hostNetwork:\\s*true|postRenderer|hooks:' .
+rg -n 'source\\s*=\\s*"(git::|github.com|https?://)|local-exec|remote-exec|external|\\.gitmodules|git\\+|github:|vendor/' .
 ```
 
 ## IDE and AI-tooling checks

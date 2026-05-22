@@ -15,7 +15,7 @@ https://github.com/ZarK/ai-supply-chain-guard
 After installing, read the installed skill and apply it to the current repository:
 
 ```text
-Use the supply-chain-guard skill before dependency, package-manager, CI, release, IDE-extension, MCP, or AI-agent-tool work in this repo. First inspect the manifests, lockfiles, workflows, package-manager config, and agent/tooling config. Then report what protections are missing before making changes.
+Use the supply-chain-guard skill before dependency, package-manager, model/dataset, container, IaC, CI, release, IDE-extension, MCP, or AI-agent-tool work in this repo. First inspect the manifests, lockfiles, workflows, package-manager config, artifact sources, and agent/tooling config. Then report what protections are missing before making changes.
 ```
 
 For humans, the shortest instruction to give your agent is:
@@ -33,7 +33,7 @@ You are installing a local agent skill, not a software package.
 3. Copy the full `supply-chain-guard/` directory into the user's agent skill location.
 4. If the target tool does not have native skills, add a small bridge instruction that points at the installed skill.
 5. Verify by reading the installed `SKILL.md`.
-6. Start using the skill before dependency, package-manager, CI, release, IDE-extension, MCP, or AI-agent-tool work.
+6. Start using the skill before dependency, package-manager, model/dataset, container, IaC, CI, release, IDE-extension, MCP, or AI-agent-tool work.
 
 Do not duplicate the full skill into multiple instruction files. Keep one canonical copy of the skill and use bridges that point to it.
 
@@ -82,7 +82,7 @@ For tools that read repository instructions such as `AGENTS.md`, `CLAUDE.md`, `G
 ```md
 # Supply Chain Guard
 
-Before any install, update, scaffold, package-manager command, CI action/workflow change, IDE/MCP/agent-tool change, release job, or dependency-provided tool execution, read and follow `.agents/skills/supply-chain-guard/SKILL.md`.
+Before any install, update, scaffold, package-manager command, model/dataset load, container/IaC change, CI action/workflow change, IDE/MCP/agent-tool change, release job, or dependency-provided tool execution, read and follow `.agents/skills/supply-chain-guard/SKILL.md`.
 
 For deeper guidance, load only the relevant file from `.agents/skills/supply-chain-guard/references/`.
 ```
@@ -91,15 +91,16 @@ For a global-only install, adapt the path in the bridge to the global skill loca
 
 ## What This Skill Is
 
-AI Supply Chain Guard is an agent skill that makes coding agents and human reviewers defensive around dependencies and developer tooling. It is meant to reduce preventable exposure to package compromise, CI compromise, malicious install scripts, dependency confusion, unsafe generators, poisoned caches, compromised actions, suspicious IDE extensions, risky MCP servers, and AI-agent tool persistence.
+AI Supply Chain Guard is an agent skill that makes coding agents and human reviewers defensive around dependencies and developer tooling. It is meant to reduce preventable exposure to package compromise, CI compromise, malicious install scripts, dependency confusion, unsafe generators, poisoned caches, compromised actions, suspicious IDE extensions, risky MCP servers, AI/ML artifact poisoning, risky containers/IaC, and AI-agent tool persistence.
 
 The skill tells an agent to:
 
 - prefer no new dependency when existing code is enough
 - pin exact versions and preserve lockfiles
+- prefer checked-in project package-manager policy, including pnpm security settings in `pnpm-workspace.yaml`
 - block or review young package releases before adoption
 - disable lifecycle scripts by default
-- treat package-manager commands and project generators as code execution
+- treat package-manager commands, project generators, model/dataset loading, container builds, and IaC modules as code execution surfaces
 - verify signatures, provenance, attestations, repositories, workflows, refs, builders, and artifact digests where supported
 - remember that valid provenance proves origin or integrity, not that code is safe
 - treat CI actions, reusable workflows, caches, artifacts, release jobs, IDE extensions, MCP servers, and agent tools as dependencies
@@ -113,8 +114,9 @@ Use the skill before touching any of these:
 
 - package manifests, dependency files, lockfiles, or package-manager config
 - `npm`, `npx`, `pnpm`, `yarn`, `bun`, `deno`, `uv`, `pip`, `poetry`, `pipenv`, `cargo`, `go`, `mvn`, `gradle`, `dotnet`, `bundle`, `composer`, `pod`, package installers, or project generators
+- model, dataset, tokenizer, embedding, fine-tune, LoRA/adapter, vector-store, prompt-template, or RAG source references
 - GitHub Actions, reusable workflows, workflow templates, CI caches, artifacts, release jobs, or publish pipelines
-- Dockerfiles, container image references, binary downloads, one-line shell installers, or generated toolchains
+- Dockerfiles, container image references, IaC modules/charts/roles, submodules, vendored code, Git LFS pointers, binary downloads, one-line shell installers, or generated toolchains
 - VS Code/Open VSX/Cursor/Windsurf/JetBrains extensions, MCP configs, AI-agent tools, or automation permissions
 - active advisories, suspicious dependency changes, unexpected scripts, new transitive sources, or suspected credential exposure
 
@@ -126,8 +128,10 @@ The installable skill follows the common agent skill structure:
 supply-chain-guard/
 |-- SKILL.md
 `-- references/
+    |-- ai-ml-artifacts.md
     |-- attack-patterns.md
     |-- ci-and-repository-hardening.md
+    |-- containers-iac-and-repo-sources.md
     |-- ecosystem-playbooks.md
     |-- incident-response.md
     |-- package-manager-configs.md
@@ -162,6 +166,7 @@ For the deeper tutorial, read [`supply-chain-guard/references/threat-model-and-r
 - GitHub Actions, reusable workflows, cache scopes, artifacts, tags, and release jobs as supply-chain dependencies
 - `pull_request_target`, poisoned caches, mutable action tags, and overbroad OIDC permissions
 - trust downgrade, exotic sources, Git dependencies, tarballs, and registry confusion
+- AI/ML artifacts, unsafe model loading, RAG source poisoning, containers, IaC modules, vendored code, submodules, and Git LFS as dependency surfaces
 - IDE extensions, MCP servers, AI-agent config, and editor marketplaces as executable supply-chain surfaces
 - incident response when a malicious dependency may have exposed workstation, CI, SCM, registry, or cloud credentials
 
@@ -171,7 +176,7 @@ This skill changes agent behavior. It should be paired with real controls where 
 
 - install-time malware blocking, registry proxying, or package intelligence on developer machines and CI runners
 - exact versions, frozen installs, checked-in lockfiles, and lifecycle scripts disabled by default
-- native package-age gates such as npm `min-release-age`, pnpm `minimumReleaseAge`, Yarn `npmMinimalAgeGate`, Bun `minimumReleaseAge`, Deno `minimumDependencyAge`, uv `exclude-newer`, and pip `--uploaded-prior-to`
+- native package-age gates such as npm `min-release-age`, pnpm `minimumReleaseAge` in checked-in `pnpm-workspace.yaml`, Yarn `npmMinimalAgeGate`, Bun `minimumReleaseAge`, Deno `minimumDependencyAge`, uv `exclude-newer`, and pip `--uploaded-prior-to`
 - dependency review, vulnerability alerts, code scanning, secret scanning with push protection, signed commits, and repository rulesets
 - trusted publishing, short-lived OIDC credentials, protected release environments, and artifact/provenance verification
 - isolated dev containers, VMs, Codespaces, or short-lived runners for risky dependency work
@@ -180,7 +185,7 @@ Use third-party products only when they fit the user's environment, budget, and 
 
 ## Example Prompts
 
-See [`examples/README.md`](examples/README.md) for short prompts covering repository review, dependency review, dependency diffs, CI/release review, incident triage, and a comprehensive full review.
+See [`examples/README.md`](examples/README.md) for short prompts covering repository review, pnpm hardening, dependency review, AI/ML artifact review, dependency diffs, CI/release review, incident triage, and a comprehensive full review.
 
 ## Install In Agentic Coding Tools
 
@@ -281,6 +286,13 @@ Package-manager and registry controls:
 - [uv Docs: Settings](https://docs.astral.sh/uv/reference/settings/)
 - [pip Docs: pip install](https://pip.pypa.io/en/stable/cli/pip_install/)
 - [PyPI Docs: Trusted Publishers](https://docs.pypi.org/trusted-publishers/)
+
+AI/ML, container, and IaC artifact guidance:
+
+- [Hugging Face Docs: Security](https://huggingface.co/docs/hub/security)
+- [Safetensors Docs](https://huggingface.co/docs/safetensors/index)
+- [SLSA: Supply chain threats](https://slsa.dev/spec/v1.2/threats-overview)
+- [OpenSSF: Secure Supply Chain Consumption Framework](https://github.com/ossf/s2c2f)
 
 Optional scanners and hardening tools:
 
