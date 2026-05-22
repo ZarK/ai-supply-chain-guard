@@ -30,6 +30,7 @@ Keep this file active for every dependency-related task. Load these references o
 - `references/attack-patterns.md`: compromise indicators and suspicious dependency patterns to search for.
 - `references/incident-response.md`: suspected compromise triage, containment, token rotation, and recovery.
 - `references/ci-and-repository-hardening.md`: repository rules, CI permissions, dependency review, secret scanning, and release hardening.
+- `references/npm-trusted-publishing.md`: npm Trusted Publishing, staged publishing, identity matching, safe diagnostics, and troubleshooting.
 - `references/package-manager-configs.md`: durable secure defaults for common package managers.
 - `references/tooling.md`: optional scanners and guards such as install-time blockers, OSV-Scanner, OpenSSF Scorecard, SBOM tools, and container scanners.
 
