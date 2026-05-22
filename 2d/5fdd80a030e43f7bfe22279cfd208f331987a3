@@ -1,0 +1,19 @@
+supply-chain-guard/references/containers-iac-and-repo-sources.md
+  s_6ba5fa8c32dcb1::t_7e059e6589351d 1-99
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "2d5fdd80a030e43f7bfe22279cfd208f331987a3",
+  "prompts": {},
+  "sessions": {
+    "s_6ba5fa8c32dcb1": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e467f-a65b-7b51-9a09-ed70494f03ad",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
