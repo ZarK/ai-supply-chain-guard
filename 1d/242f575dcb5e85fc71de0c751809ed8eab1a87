@@ -1,0 +1,19 @@
+AGENTS.md
+  s_8ef2a6f5ccb4f2::t_910189fa230f80 8-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "1d242f575dcb5e85fc71de0c751809ed8eab1a87",
+  "prompts": {},
+  "sessions": {
+    "s_8ef2a6f5ccb4f2": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e4fa8-264d-70c3-829e-9de3ed552653",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
