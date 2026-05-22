@@ -1,0 +1,37 @@
+supply-chain-guard/references/attack-patterns.md
+  s_6ba5fa8c32dcb1::t_e21deaaa6a9e0f 23-24,45-60,101-115
+examples/README.md
+  s_6ba5fa8c32dcb1::t_5d8f95e4cbaf45 17-22,29-34,50
+supply-chain-guard/references/ci-and-repository-hardening.md
+  s_6ba5fa8c32dcb1::t_8c66fe9e0299f9 9,18,69,82
+CHANGELOG.md
+  s_6ba5fa8c32dcb1::t_3b655625b654ff 8-10
+supply-chain-guard/references/tooling.md
+  s_6ba5fa8c32dcb1::t_d94b7c0901384e 26-27,69-70
+supply-chain-guard/SKILL.md
+  s_6ba5fa8c32dcb1::t_1eced7ef42ed08 13,16,30,36,42,50-51,70,91-92,110,132,144,157
+supply-chain-guard/references/ecosystem-playbooks.md
+  s_6ba5fa8c32dcb1::t_3b454bcedb6e92 14,40-58,188-218
+supply-chain-guard/references/threat-model-and-rules.md
+  s_6ba5fa8c32dcb1::t_d46378a2d496c9 195-233,243-245
+README.md
+  s_6ba5fa8c32dcb1::t_a12b7c59d54d7a 18,94,100,103,117,119,131,134,169,179,290-293,295
+  s_6ba5fa8c32dcb1::t_d5aaa4012d920b 36,85,188
+  s_6ba5fa8c32dcb1::t_e6bcd40fb93218 294
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "a4562bb0e181e652af973049fe2911670cb8062a",
+  "prompts": {},
+  "sessions": {
+    "s_6ba5fa8c32dcb1": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e467f-a65b-7b51-9a09-ed70494f03ad",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
