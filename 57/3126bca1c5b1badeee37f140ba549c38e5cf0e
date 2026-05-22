@@ -1,0 +1,29 @@
+supply-chain-guard/references/npm-trusted-publishing.md
+  s_8ef2a6f5ccb4f2::t_44ad59ffe7b540 1-8,11-37,40-86,88-97
+  s_8ef2a6f5ccb4f2::t_0f6e1cd327abbc 9-10
+  s_8ef2a6f5ccb4f2::t_7346a49af2be49 38-39,87
+supply-chain-guard/SKILL.md
+  s_8ef2a6f5ccb4f2::t_44ad59ffe7b540 33
+supply-chain-guard/references/ci-and-repository-hardening.md
+  s_8ef2a6f5ccb4f2::t_44ad59ffe7b540 66
+README.md
+  s_8ef2a6f5ccb4f2::t_44ad59ffe7b540 133,165
+CHANGELOG.md
+  s_8ef2a6f5ccb4f2::t_44ad59ffe7b540 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "573126bca1c5b1badeee37f140ba549c38e5cf0e",
+  "prompts": {},
+  "sessions": {
+    "s_8ef2a6f5ccb4f2": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e4fa8-264d-70c3-829e-9de3ed552653",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
