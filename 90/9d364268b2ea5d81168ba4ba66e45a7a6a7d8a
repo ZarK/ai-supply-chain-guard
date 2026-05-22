@@ -1,0 +1,19 @@
+supply-chain-guard/references/ai-ml-artifacts.md
+  s_6ba5fa8c32dcb1::t_e42c4a92b5cc07 1-79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "909d364268b2ea5d81168ba4ba66e45a7a6a7d8a",
+  "prompts": {},
+  "sessions": {
+    "s_6ba5fa8c32dcb1": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e467f-a65b-7b51-9a09-ed70494f03ad",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
