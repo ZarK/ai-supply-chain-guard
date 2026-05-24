@@ -1,0 +1,19 @@
+.github/workflows/lint.yml
+  s_c8cbc9f4b7c8b4::t_d434c28e2f0a9f 9-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "27873f88b1bbff522c2a64d6c848803e8a7093cb",
+  "prompts": {},
+  "sessions": {
+    "s_c8cbc9f4b7c8b4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e589e-26b4-7da0-aae8-3ce976ea7109",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
