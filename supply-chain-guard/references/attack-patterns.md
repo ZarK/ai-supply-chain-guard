@@ -35,7 +35,7 @@ Useful local searches:
 rg -n 'autoload|bootstrap|entry_points|console_scripts|plugin|plugins|provider|providers|service[-_ ]?loader|ServiceLoader|META-INF/services|auto[-_ ]?configuration|spring\\.factories|initializer|init\\b|hook|hooks|codegen|generate|sourceGenerator|build\\.rs|proc_macro' .
 rg -n 'curl|wget|Invoke-WebRequest|iwr |fetch\\(|requests\\.|httpx|urllib|reqwest|download|chmod|exec\\(|spawn\\(|subprocess|ProcessBuilder|Runtime\\.getRuntime|eval\\(|Function\\(|import\\(|require\\(|/tmp|mktemp|sys_get_temp_dir|nohup|systemd|crontab|launchctl' .
 rg -n 'CLAUDE\\.md|\\.cursorrules|AGENTS\\.md|\\.vscode/tasks\\.json|\\.vscode/settings\\.json|\\.mcp\\.json|mcp\\.json|claude_desktop_config\\.json|\\.claude|\\.cursor|\\.windsurf|\\.git/hooks|pre-commit|post-checkout|post-merge|prompt|instruction|rules|permissions|allow' .
-rg -n '[\\u200B-\\u200F\\u202A-\\u202E\\u2060-\\u206F]' .
+rg -nP '[\x{200B}-\x{200F}\x{202A}-\x{202E}\x{2060}-\x{206F}]' .
 ```
 
 ## JavaScript-specific checks
@@ -113,7 +113,7 @@ Useful local searches:
 ```sh
 rg -n 'extensionPack|extensionDependencies|activationEvents|contributes|main|browser' .vscode '**/package.json' '*.vsixmanifest'
 rg -n 'mcpServers|command|args|env|allow|permissions|filesystem|shell|stdio|sse|http' .mcp.json mcp.json claude_desktop_config.json .claude .cursor .windsurf
-rg -n '[\\u200B-\\u200F\\u202A-\\u202E\\u2060-\\u206F]' .
+rg -nP '[\x{200B}-\x{200F}\x{202A}-\x{202E}\x{2060}-\x{206F}]' .
 ```
 
 ## Review result standard
