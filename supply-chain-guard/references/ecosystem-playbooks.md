@@ -11,6 +11,7 @@ Use this reference when a task touches a specific package manager, lockfile, pro
 5. Prefer an older compatible version if the newest version fails the package-age policy.
 6. Use native age gates, script approvals, trust policy, and provenance checks where the pinned package-manager version supports them.
 7. Review lockfile diffs for unexpected transitive additions, source changes, Git/tarball URLs, script-bearing packages, and registry changes.
+8. Review dependency-controlled execution and influence surfaces that are new, changed, generated, or about to run or be read, including lifecycle scripts, import/bootstrap hooks, CI commands, generated files, nested manifests, and agent/editor/tool configuration.
 
 ## JavaScript and TypeScript
 
@@ -33,8 +34,8 @@ Before adding packages:
 - Use native script approval where available: pnpm `approve-builds` / `allowBuilds`, Deno `approve-scripts`, Yarn `enableScripts: false` plus per-package `dependenciesMeta`, and Bun `trustedDependencies` after review.
 - Run provenance/signature checks where supported, such as `npm audit signatures`, but treat valid provenance as identity evidence rather than a safety verdict.
 - Treat `npx`, `npm create`, `pnpm dlx`, `yarn dlx`, `bunx`, `deno run`, and generator templates as code execution. Pin exact package versions or immutable URLs before use.
-- Inspect `scripts`, `bin`, `optionalDependencies`, `peerDependenciesMeta`, `install`, `postinstall`, `preinstall`, `prepare`, and native binary download paths.
-- Watch lockfiles for registry host changes, tarball URL changes, integrity changes without version changes, and newly introduced Git dependencies.
+- Inspect `scripts`, `bin`, entry points, loaders, package-manager plugins, framework auto-discovery metadata, `optionalDependencies`, `peerDependenciesMeta`, lifecycle hooks, and native binary download paths.
+- Watch lockfiles for registry host changes, tarball URL changes, integrity changes without version changes, provenance subject changes, source/digest reference changes, retargeted Git tags, and newly introduced Git dependencies.
 
 ## Python
 
@@ -56,6 +57,7 @@ Before adding packages:
 - Pin exact versions with `==` in requirements or exact lock entries.
 - Use uv `exclude-newer` / `exclude-newer-package` where appropriate, and map private indexes explicitly to reduce dependency-confusion risk.
 - Avoid `setup.py` execution paths, arbitrary build backends, and source builds until reviewed; prefer wheels only (`--only-binary=:all:`) for high-risk installs when feasible.
+- Review entry points, plugins, import-time side effects, generated code hooks, startup modules, direct URLs, VCS refs, wheel/sdist changes, and index/source mapping changes.
 - Prefer PyPI Trusted Publishers and digital attestations for publishing, but still verify the expected workflow identity and source path.
 - Treat `pipx`, `uvx`, `python -m pip`, `poetry run`, and project scaffolding tools as code execution.
 
@@ -72,7 +74,8 @@ Safe existing installs:
 Before adding modules:
 
 - Pin semantic import versions explicitly, for example `go get example.com/module@v1.2.3`.
-- Verify module path ownership, proxy/checksum behavior, `go.sum` changes, and repository tags.
+- Verify module path ownership, proxy/checksum behavior, `go.sum` changes, `replace` directives, repository tags, and resolved commits.
+- Review `init` functions, blank imports, code generators, plugin registration, and build/test commands that can execute dependency code.
 - Be cautious with private module configuration, `GONOSUMDB`, `GONOPROXY`, and `GOPRIVATE`; do not disable public checksum verification for public modules.
 
 ## Rust
@@ -87,7 +90,7 @@ Safe existing installs:
 Before adding crates:
 
 - Query crates.io metadata for `created_at`, repository, owners, features, and yanked status.
-- Pin exact versions where risk is high and inspect feature expansion.
+- Pin exact versions where risk is high and inspect feature expansion, source changes, checksums, and Git dependencies.
 - Treat `build.rs`, proc macros, native linking, and downloaded binaries as high risk.
 - Use `cargo vet` or `cargo crev` where the project already uses them.
 
@@ -105,7 +108,7 @@ Before adding dependencies:
 
 - Pin exact `group:artifact:version`; avoid dynamic versions such as `+`, `latest.release`, version ranges, and changing plugin portals without review.
 - Review repositories in build files; avoid adding broad public mirrors or untrusted custom repositories.
-- Treat Gradle plugins and Maven plugins as executable code.
+- Treat Gradle plugins, Maven plugins, annotation processors, service loaders, framework auto-configuration, and generated-code hooks as executable code.
 
 ## .NET
 
@@ -121,7 +124,7 @@ Before adding packages:
 - Pin exact versions and trusted package sources.
 - Use Package Source Mapping when multiple feeds are configured.
 - Review `NuGet.config` for unexpected feeds or embedded credentials.
-- Treat analyzers, source generators, MSBuild targets, and native assets as executable code.
+- Treat analyzers, source generators, MSBuild targets, assembly/module initializers, startup hooks, and native assets as executable code.
 
 ## Ruby
 
@@ -135,7 +138,7 @@ Safe existing installs:
 Before adding gems:
 
 - Pin exact versions when risk is high, check release age, source, authors, and native extensions.
-- Review `post_install` hooks and gems that alter build or deployment behavior.
+- Review `post_install` hooks, Railties, initializers, plugins, generators, and gems that alter build, deployment, or framework startup behavior.
 
 ## PHP
 
@@ -149,8 +152,8 @@ Safe existing installs:
 
 Before adding packages:
 
-- Pin versions, review Packagist metadata, repository URLs, abandoned status, plugins, and autoload changes.
-- Treat Composer plugins and scripts as code execution.
+- Pin versions, review Packagist metadata, repository URLs, abandoned status, plugins, autoload changes, branch aliases, VCS/path repositories, and whether old tags or source references were retargeted.
+- Treat Composer plugins, scripts, `autoload.files`, framework package discovery, service providers, and generated autoloaders as code execution. `--no-scripts --no-plugins` does not prevent code from running later when `vendor/autoload.php`, a framework, a test runner, or a CLI loads the dependency graph.
 
 ## CI actions, reusable workflows, and release automation
 
@@ -160,6 +163,7 @@ Safe defaults:
 
 - Pin third-party actions and reusable workflows to immutable commit SHAs where the platform supports it.
 - Treat tag and branch references as mutable dependency versions.
+- Treat new or modified CI `run` blocks as executable dependency code, especially in jobs with write tokens, secrets, OIDC, cache/artifact writes, publish steps, or deploy permissions.
 - Avoid `pull_request_target` or equivalent privileged fork events for workflows that check out, install, build, cache, or run untrusted code.
 - Do not let untrusted pull request jobs write caches or artifacts that privileged release/deploy jobs later restore.
 - Prefer clean release installs from reviewed lockfiles over restored mutable caches.
@@ -173,8 +177,8 @@ Safe defaults:
 
 - Treat extensions, MCP servers, and agent tools as executable dependencies with access to source files, shells, networks, credentials, or editors.
 - Pin versions or immutable releases where supported.
-- Review extension dependencies, extension packs, activation events, bundled JavaScript, hidden Unicode, native binaries, and marketplace publisher changes.
-- Review tool permissions for shell execution, filesystem access, network access, and environment-variable access.
+- Review extension dependencies, extension packs, activation events, bundled JavaScript, hidden Unicode, native binaries, marketplace publisher changes, project instruction files, hook configs, and external configuration URLs.
+- Review tool permissions for shell execution, filesystem access, network access, environment-variable access, and credential-store access.
 
 ## Containers and OS packages
 

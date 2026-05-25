@@ -255,7 +255,7 @@ composer install --no-scripts --no-plugins
 composer audit
 ```
 
-Use Composer's modern `config.policy` / security blocking controls where available so insecure versions are blocked during update/require/delete operations. Review Composer plugins, scripts, repositories, path repositories, and autoload changes before enabling scripts/plugins.
+Use Composer's modern `config.policy` / security blocking controls where available so insecure versions are blocked during update/require/delete operations. Review Composer plugins, scripts, repositories, path repositories, branch aliases, `source.reference`, `dist.reference`, and autoload changes before enabling scripts/plugins or loading `vendor/autoload.php`. `--no-scripts --no-plugins` does not prevent later execution through eager autoloaded files or framework bootstrap.
 
 ## Bundler and Ruby
 

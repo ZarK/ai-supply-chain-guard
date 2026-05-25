@@ -6,20 +6,37 @@ Use this reference when reviewing a dependency change, investigating a named cam
 
 - A patch or minor release published very recently for a popular package.
 - A package version whose tarball, integrity hash, or registry source changed unexpectedly.
+- A previously released version, tag, branch, dist reference, source reference, provenance subject, or digest that now resolves to different content.
 - New or modified `preinstall`, `install`, `postinstall`, `prepare`, `prepack`, `build`, or equivalent lifecycle scripts.
+- New or modified import, bootstrap, autoload, framework discovery, plugin, service-provider, source-generation, or startup metadata.
 - New `optionalDependencies`, platform-specific packages, or binary downloader packages.
 - Newly added Git, tarball, HTTP, file path, or branch-based dependencies.
+- Nested manifests or generated files that introduce another package manager, runtime, CI command, hook, or tool config.
 - Obfuscated JavaScript, packed/minified installer code, base64 payloads, dynamic `eval`, `Function`, shell command construction, or environment-variable enumeration.
 - Code that reads home directories, shell history, `.npmrc`, `.pypirc`, `.netrc`, cloud credentials, SSH keys, kubeconfigs, package-manager tokens, GitHub tokens, CI variables, or password-manager exports.
-- Network calls from install-time scripts, especially to paste sites, object storage, newly registered domains, URL shorteners, raw gist URLs, or unknown analytics endpoints.
+- Network calls from install-time, build-time, import-time, bootstrap-time, CI, or generated code, especially to paste sites, object storage, newly registered domains, URL shorteners, raw gist URLs, or unknown analytics endpoints.
+- Downloaded network bytes that are written, interpreted, imported, executed, persisted, or later consumed by privileged jobs.
 - Sudden maintainer additions, ownership transfers, new publishing automation, or repository metadata changes near the suspicious release.
 - Package metadata pointing to a repository that does not match the package name, scope, maintainers, or release history.
-- Generated files or lockfile entries that introduce a second package manager.
+- New or modified agent/editor instruction files, task definitions, hook configs, MCP/tool configs, local permission files, external config URLs, or hidden Unicode.
 - Valid provenance from an unexpected workflow, ref, environment, builder, or repository.
 - A package or artifact that used to have stronger trust evidence and now has weaker or missing provenance/signature evidence.
 - Privileged release jobs restoring caches or artifacts created by pull request workflows.
 - Package-manager-native warnings about blocked young versions, unreviewed build scripts, trust downgrades, ignored builds, or exotic sources.
 - Age-gate or script-approval bypass lists growing without documented review.
+
+## Cross-ecosystem execution and influence checks
+
+Review dependency-controlled files that are new, changed, generated, or about to run or be read. Focus on source-to-sink behavior: what can execute code, load code at startup, persist hooks, alter tool behavior, or steer an agent/editor with filesystem, shell, network, or credential access.
+
+Useful local searches:
+
+```sh
+rg -n 'autoload|bootstrap|entry_points|console_scripts|plugin|plugins|provider|providers|service[-_ ]?loader|ServiceLoader|META-INF/services|auto[-_ ]?configuration|spring\\.factories|initializer|init\\b|hook|hooks|codegen|generate|sourceGenerator|build\\.rs|proc_macro' .
+rg -n 'curl|wget|Invoke-WebRequest|iwr |fetch\\(|requests\\.|httpx|urllib|reqwest|download|chmod|exec\\(|spawn\\(|subprocess|ProcessBuilder|Runtime\\.getRuntime|eval\\(|Function\\(|import\\(|require\\(|/tmp|mktemp|sys_get_temp_dir|nohup|systemd|crontab|launchctl' .
+rg -n 'CLAUDE\\.md|\\.cursorrules|AGENTS\\.md|\\.vscode/tasks\\.json|\\.vscode/settings\\.json|\\.mcp\\.json|mcp\\.json|claude_desktop_config\\.json|\\.claude|\\.cursor|\\.windsurf|\\.git/hooks|pre-commit|post-checkout|post-merge|prompt|instruction|rules|permissions|allow' .
+rg -nP '[\x{200B}-\x{200F}\x{202A}-\x{202E}\x{2060}-\x{206F}]' .
+```
 
 ## JavaScript-specific checks
 
@@ -29,7 +46,7 @@ Search manifests and lockfiles for:
 - `optionalDependencies`, `bundleDependencies`, `bundledDependencies`, and `overrides` that change install behavior.
 - `git+`, `github:`, `http:`, `https:`, `file:`, `link:`, `workspace:*`, `patch:`, and `portal:` specifiers.
 - New `.npmrc`, `.yarnrc`, `.yarnrc.yml`, `.pnpmfile.cjs`, `patches/`, `.pnp.cjs`, or package-manager hook files.
-- Lockfile entries with changed `resolved`, `integrity`, `checksum`, `dependencies`, `optionalDependencies`, or package registry host.
+- Lockfile entries with changed `resolved`, `integrity`, `checksum`, `dependencies`, `optionalDependencies`, provenance subject, source reference, or package registry host.
 
 Useful local searches:
 
@@ -47,6 +64,7 @@ Search manifests and lockfiles for:
 - Direct URLs, VCS requirements, editable installs, path dependencies, extras that pull large dependency sets, and custom indexes.
 - `setup.py`, `setup.cfg`, `pyproject.toml` build backends, plugin entry points, and native extensions.
 - New `pip.conf`, `pip.ini`, `uv.toml`, `poetry.toml`, or index credentials.
+- Wheel versus source distribution changes, import-time side effects, and generated startup modules.
 
 Useful local searches:
 
@@ -69,6 +87,7 @@ Review:
 - Newly introduced reusable workflows from third-party repositories.
 - Cache keys, restore keys, and artifact paths that cross from untrusted pull request jobs into trusted release/deploy jobs.
 - Release/tag rewrite behavior in CI dependencies.
+- New or modified `run` blocks, especially those that download, write, execute, cache, publish, or read secrets.
 
 Useful local searches:
 
@@ -94,7 +113,7 @@ Useful local searches:
 ```sh
 rg -n 'extensionPack|extensionDependencies|activationEvents|contributes|main|browser' .vscode '**/package.json' '*.vsixmanifest'
 rg -n 'mcpServers|command|args|env|allow|permissions|filesystem|shell|stdio|sse|http' .mcp.json mcp.json claude_desktop_config.json .claude .cursor .windsurf
-rg -n '[\\u200B-\\u200F\\u202A-\\u202E\\u2060-\\u206F]' .
+rg -nP '[\x{200B}-\x{200F}\x{202A}-\x{202E}\x{2060}-\x{206F}]' .
 ```
 
 ## Review result standard

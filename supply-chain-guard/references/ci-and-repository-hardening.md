@@ -17,7 +17,7 @@ Use this reference when asked to harden a repository, CI pipeline, release workf
 - Enable dependency inventory, vulnerability alerts, malware alerts where available, and dependency review for pull requests.
 - Require dependency review as a PR gate for manifests, lockfiles, CI workflow files, reusable workflow references, third-party actions, container build definitions, and package-manager config.
 - Require lockfile changes to be included with manifest changes.
-- Block dependency changes that introduce unpinned versions, mutable URLs, untrusted registries, mutable CI action refs, reusable workflow refs, or lifecycle scripts without review.
+- Block dependency changes that introduce unpinned versions, mutable URLs, untrusted registries, mutable CI action refs, reusable workflow refs, lifecycle scripts, generated executable files, agent/editor tool config, or bootstrap hooks without review.
 - Prefer automated dependency update PRs that are small, grouped by ecosystem/risk, and reviewed before merge.
 
 ## Secret controls
@@ -37,6 +37,7 @@ Use this reference when asked to harden a repository, CI pipeline, release workf
 - Avoid `pull_request_target` or equivalent privileged fork events for workflows that check out, install, build, cache, or execute untrusted code. If unavoidable, do not check out the pull request head/merge ref, do not run package-manager commands, do not restore shared caches, and grant no write token or OIDC permission.
 - Pin third-party actions and reusable workflows to full-length commit SHAs. A tag or branch is mutable and should be reviewed like a floating dependency version.
 - When pinning GitHub Actions by SHA, keep a same-line comment with the reviewed upstream version tag, for example `owner/action@<full-sha> # v1.2.3`, so humans and update tools can understand the intended release while the executable ref stays immutable.
+- Treat new or modified inline `run` blocks as executable dependency code. Review them for network downloads, shell execution, secret access, OIDC/write permissions, artifact/cache writes, publish commands, and privilege-boundary crossings before they run in trusted jobs.
 - Avoid persistent self-hosted runners for untrusted code. Use ephemeral runners or isolated job environments.
 - Clear package-manager caches after confirmed compromise and avoid sharing writable caches between trusted and untrusted jobs.
 
@@ -73,7 +74,7 @@ Use this reference when asked to harden a repository, CI pipeline, release workf
 For every dependency or CI change, answer:
 
 - Does this change alter the dependency graph, lockfile, install behavior, registry, or executable lifecycle hooks?
-- Does any new code run during install, build, test, release, or deployment?
+- Does any new code run or get read during install, build, import, bootstrap, test, CI, release, deployment, editor startup, or agent/tool startup?
 - Does the workflow expose secrets or write tokens to code from forks or untrusted branches?
 - Can untrusted jobs write caches or artifacts consumed by privileged jobs?
 - Are third-party actions and reusable workflows pinned to immutable refs?
