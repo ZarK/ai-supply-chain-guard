@@ -1,0 +1,19 @@
+supply-chain-guard/references/attack-patterns.md
+  s_b8c0f190946d87::t_f59ce28b7b5869 38,116
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.1",
+  "base_commit_sha": "19a3256ced2c10e70abe12f42a94789eb1a83a13",
+  "prompts": {},
+  "sessions": {
+    "s_b8c0f190946d87": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e53da-c2f7-7822-9675-1752226ea922",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
