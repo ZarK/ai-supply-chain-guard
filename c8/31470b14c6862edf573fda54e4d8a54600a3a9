@@ -1,0 +1,29 @@
+supply-chain-guard/references/ecosystem-playbooks.md
+  s_b8c0f190946d87::t_df7154ed4da761 14,37-38,60,77-78,93,111,127,141,155-156,166,180-181
+supply-chain-guard/references/attack-patterns.md
+  s_b8c0f190946d87::t_4855f498a61362 9,11,14,17-18,21,28-40,49,67,90
+supply-chain-guard/SKILL.md
+  s_b8c0f190946d87::t_6bf9baa755fce7 15,45-46,79,82-83,91-92,148
+supply-chain-guard/references/incident-response.md
+  s_b8c0f190946d87::t_958431859587b3 11,18,22,28-30,33,53
+supply-chain-guard/references/package-manager-configs.md
+  s_b8c0f190946d87::t_87fdf9c4e95d84 258
+supply-chain-guard/references/ci-and-repository-hardening.md
+  s_b8c0f190946d87::t_3c3f4f19e0740d 20,40,77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.0",
+  "base_commit_sha": "c831470b14c6862edf573fda54e4d8a54600a3a9",
+  "prompts": {},
+  "sessions": {
+    "s_b8c0f190946d87": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e53da-c2f7-7822-9675-1752226ea922",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
