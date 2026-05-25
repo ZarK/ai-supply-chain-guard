@@ -1,0 +1,19 @@
+.github/workflows/external-links.yml
+  s_b8c0f190946d87::t_c854d7f514ff00 29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.1",
+  "base_commit_sha": "e96549bba490da2bca8a94ec27258ea513a998a2",
+  "prompts": {},
+  "sessions": {
+    "s_b8c0f190946d87": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e53da-c2f7-7822-9675-1752226ea922",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
