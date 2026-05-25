@@ -8,27 +8,29 @@ Use this reference when a repository may have installed, built, published, or ex
 2. Preserve evidence before cleanup: manifests, lockfiles, package-manager caches if relevant, CI logs, shell history snippets, suspicious package tarballs, process listings, network indicators, and timestamps.
 3. Identify the exposure window: first possible install time, CI jobs that ran during that window, developer machines that ran installs, and releases published afterward.
 4. Compare exact package names, versions, tarball URLs, hashes, and advisory timestamps against current advisories.
-5. Assume any secret available to install/build scripts, CI actions, MCP servers, IDE extensions, or release jobs may be compromised until proven otherwise.
+5. Assume any secret available to install/build/import/bootstrap code, CI actions, MCP servers, IDE extensions, agent/editor tooling, or release jobs may be compromised until proven otherwise.
 6. Do not assume a package or artifact is safe because it has valid provenance, signatures, or trusted-publishing metadata. Verify the expected workflow/ref/environment and inspect the release path.
 
 ## Containment
 
 - Remove or pin away from compromised versions and regenerate lockfiles only after deciding the safe target versions.
 - Disable or pause publish workflows, package release automation, and deployment jobs until credentials are rotated.
-- Revoke or rotate registry tokens, Git hosting tokens, cloud credentials, SSH deploy keys, CI secrets, OIDC trust relationships, kubeconfigs, Vault tokens, package signing keys, and deployment credentials that were available to affected jobs or machines.
+- Revoke or rotate registry tokens, Git hosting tokens, cloud credentials, SSH deploy keys, CI secrets, OIDC trust relationships, kubeconfigs, Vault tokens, package signing keys, AI provider keys, and deployment credentials that were available to affected jobs or machines.
 - Invalidate persistent self-hosted runners that executed untrusted installs. Rebuild them from a clean image.
 - Rebuild affected self-hosted runner images, dev containers, workstations, or CI runner templates if install-time code may have executed with sensitive access. For hosted runners, discard artifacts/caches and rerun from clean jobs after controls are fixed.
 - Invalidate package-manager caches, CI caches, build caches, restored tool directories, and derived artifacts that may contain attacker-controlled files.
-- Check for malicious releases, tags, package versions, workflow edits, branch protection changes, deploy keys, webhooks, OAuth apps, personal access tokens, and machine users created during the exposure window.
+- Check for malicious releases, tags, package versions, workflow edits, branch protection changes, deploy keys, webhooks, OAuth apps, personal access tokens, machine users, Git hooks, shell startup files, scheduled jobs, system services, and agent/editor instruction or config changes created during the exposure window.
 
 ## Investigation checklist
 
 - Which manifest and lockfile entries pulled the suspicious package?
 - Was the dependency direct, transitive, optional, platform-specific, generated, or introduced by a tool?
-- Did any lifecycle script run?
+- Did any install, build, import, bootstrap, test, CI, generator, release, editor, or agent-tool code run or get read?
+- Did any agent/editor instruction, hook, task, MCP, local permission, or tool config file change?
+- Did any lockfile URL, integrity hash, source reference, dist reference, Git tag target, provenance subject, builder identity, or artifact digest change?
 - Which environment variables, token files, credentials, and mounted directories were available?
 - Did the environment have publish, release, deploy, cloud, Kubernetes, or repository administration permissions?
-- Did the package make outbound network requests? Capture domains, IPs, URLs, and payload indicators when available.
+- Did the package make outbound network requests? Capture domains, IPs, URLs, downloaded artifacts, local write paths, payload indicators, and whether network bytes were executed or persisted when available.
 - Were any downstream artifacts created after exposure: releases, container images, package publishes, binaries, SBOMs, or deployment bundles?
 - Did privileged jobs restore caches, artifacts, tool directories, or package-manager stores written by untrusted jobs?
 - Did provenance/attestation subjects, workflow identities, builder identities, refs, commits, environments, or triggering events differ from expected release policy?
@@ -48,7 +50,7 @@ During suspected compromise, preserve and review:
 
 ## Recovery
 
-- Restore dependencies to known-good versions and keep lockfile diffs reviewable.
+- Restore dependencies to known-good versions, refs, URLs, and hashes, and keep lockfile diffs reviewable.
 - Rebuild all releases, container images, packages, binaries, SBOMs, and deployment bundles produced after exposure from clean infrastructure after credential rotation.
 - Re-enable CI and release workflows only after least-privilege permissions and dependency checks are in place.
 - Add durable controls that would have reduced the incident: frozen installs, disabled lifecycle scripts, dependency review, secret scanning with push protection, package-age policy, install-time malware guard, provenance, isolated runners, and protected release rules.
