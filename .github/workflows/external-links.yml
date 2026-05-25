@@ -26,6 +26,7 @@ jobs:
             --include-fragments
             --max-retries 2
             --timeout 20
+            --exclude 'https://socket\.dev/.*'
             --verbose
             --no-progress
             "**/*.md"
