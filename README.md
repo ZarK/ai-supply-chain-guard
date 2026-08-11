@@ -1,3 +1,6 @@
+
+</think>
+
 # AI Supply Chain Guard
 
 Agent-facing install guide for a portable, tool-agnostic supply-chain defense skill.
@@ -86,6 +89,8 @@ Before any install, update, scaffold, package-manager command, CI action/workflo
 
 For deeper guidance, load only the relevant file from `.agents/skills/supply-chain-guard/references/`.
 ```
+
+The repository also ships `AGENTS.md` at the root as a ready-to-use bridge example for tools that read it.
 
 For a global-only install, adapt the path in the bridge to the global skill location, for example `~/.agents/skills/supply-chain-guard/SKILL.md`.
 
@@ -182,7 +187,7 @@ Use third-party products only when they fit the user's environment, budget, and 
 
 ## Example Prompts
 
-See [`examples/README.md`](examples/README.md) for short prompts covering repository review, dependency review, dependency diffs, CI/release review, incident triage, and a comprehensive full review.
+See [`examples/README.md`](examples/README.md) for short prompts covering repository review, dependency review, dependency change review, CI and release review, incident triage, and a full review.
 
 ## Install In Agentic Coding Tools
 
