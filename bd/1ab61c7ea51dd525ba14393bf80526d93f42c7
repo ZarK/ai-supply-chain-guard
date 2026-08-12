@@ -1,0 +1,19 @@
+CHANGELOG.md
+  s_98481534e2ba35::t_d496c1cbee5f19 7-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "bd1ab61c7ea51dd525ba14393bf80526d93f42c7",
+  "prompts": {},
+  "sessions": {
+    "s_98481534e2ba35": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7efed6fb-f69b-4f8c-bf7a-e20113c758aa",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
