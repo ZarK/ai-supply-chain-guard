@@ -1,0 +1,16 @@
+CHANGELOG.md
+  h_13eab01d19dfa9 7-8
+README.md
+  h_13eab01d19dfa9 189,194-195,197-202,206-210,213,216-219,222-224,236,238,241-242,244,248-249,256,259-262,264-266
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "20938824e2b6dc9695f8a466c267c37f55445bc7",
+  "prompts": {},
+  "humans": {
+    "h_13eab01d19dfa9": {
+      "author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
