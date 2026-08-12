@@ -7,7 +7,7 @@ Use this reference when a repository may have installed, built, published, or ex
 1. Stop dependency installs, builds, release jobs, and publish jobs in the affected environment.
 2. Preserve evidence before cleanup: manifests, lockfiles, package-manager caches if relevant, CI logs, shell history snippets, suspicious package tarballs, process listings, network indicators, and timestamps.
 3. Identify the exposure window: first possible install time, CI jobs that ran during that window, developer machines that ran installs, and releases published afterward.
-4. Compare exact package names, versions, tarball URLs, hashes, and advisory timestamps against current advisories.
+4. Compare exact package names, versions, tarball URLs, hashes, and advisory timestamps against current advisories from OSV, GHSA, NVD, registry advisory APIs, or the vendor security page. Corroborate compromised versions from two independent sources in that tier before any version change.
 5. Assume any secret available to install/build/import/bootstrap code, CI actions, MCP servers, IDE extensions, agent/editor tooling, or release jobs may be compromised until proven otherwise.
 6. Do not assume a package or artifact is safe because it has valid provenance, signatures, or trusted-publishing metadata. Verify the expected workflow/ref/environment and inspect the release path.
 
@@ -20,7 +20,7 @@ If a package-manager, shell, download, one-shot CLI, profiling, or diagnostic co
 3. Identify every artifact or package name, exact version, source, resolved URL/ref, hash, cache entry, generated file, and process introduced or touched by the command.
 4. Inventory the host or runner identity, filesystem mounts, environment variables, credential files, metadata services, network permissions, and publish/deploy authority reachable during execution.
 5. Enumerate outbound domains, IPs, URLs, API paths, uploaded content, and downloaded artifacts from DNS, proxy, endpoint, shell, CI, and application telemetry; compare them with current primary reports and advisories rather than a stale embedded IOC list.
-6. Rotate or revoke reachable credentials, review SCM/registry/cloud/CI activity for the exposure window, invalidate affected caches and artifacts, and rebuild from clean infrastructure when execution cannot be ruled out.
+6. Rotate or revoke reachable credentials from a clean machine, sign out active sessions, review SCM/registry/cloud/CI activity for the exposure window, invalidate affected caches and artifacts, and rebuild from clean infrastructure when execution cannot be ruled out.
 7. Review the intake system separately: public ingest endpoints are not necessarily secrets, but filtering, supported origin/domain controls, alert routing, and automatic agent triggers should prevent attacker-authored remediation text from becoming trusted instructions.
 
 The final incident note must include the report source, ingest path, timestamp, exact command, artifact or package identity and version, host or runner identity, execution evidence, reachable secrets, outbound indicators, containment, and remaining unknowns.
@@ -29,11 +29,14 @@ The final incident note must include the report source, ingest path, timestamp, 
 
 - Remove or pin away from compromised versions and regenerate lockfiles only after deciding the safe target versions.
 - Disable or pause publish workflows, package release automation, and deployment jobs until credentials are rotated.
+- Rotate credentials from a device that is not in the exposure set, or from a reimaged host. Do not rotate from a workstation or runner that may still be compromised. If the host ran a malicious postinstall, rotating there can hand the attacker the replacements.
+- On SCM, registry, cloud, and CI consoles, use "sign out everywhere" or revoke active sessions after rotation. Treat reachable browser sessions, cookies, and password-manager exports as compromised and rotate the underlying accounts.
 - Revoke or rotate registry tokens, Git hosting tokens, cloud credentials, SSH deploy keys, CI secrets, OIDC trust relationships, kubeconfigs, Vault tokens, package signing keys, AI provider keys, and deployment credentials that were available to affected jobs or machines.
 - Invalidate persistent self-hosted runners that executed untrusted installs. Rebuild them from a clean image.
 - Rebuild affected self-hosted runner images, dev containers, workstations, or CI runner templates if install-time code may have executed with sensitive access. For hosted runners, discard artifacts/caches and rerun from clean jobs after controls are fixed.
 - Invalidate package-manager caches, CI caches, build caches, restored tool directories, and derived artifacts that may contain attacker-controlled files.
-- Check for malicious releases, tags, package versions, workflow edits, branch protection changes, deploy keys, webhooks, OAuth apps, personal access tokens, machine users, Git hooks, shell startup files, scheduled jobs, system services, and agent/editor instruction or config changes created during the exposure window.
+- Check for malicious releases, tags, package versions, workflow edits, branch protection changes, deploy keys, webhooks, OAuth apps, personal access tokens, machine users, Git hooks, shell startup files, scheduled jobs, system services, agent/editor instruction or config changes, and private repositories made public during the exposure window.
+- Enumerate other repositories and teams in the same organization that depend on the compromised versions. Use the dependency graph, organization-wide alerts, and internal registry pull logs.
 
 ## Investigation checklist
 
@@ -52,6 +55,10 @@ The final incident note must include the report source, ingest path, timestamp, 
 - Did provenance/attestation subjects, workflow identities, builder identities, refs, commits, environments, or triggering events differ from expected release policy?
 - Did workflow logs or build artifacts expose secrets, OIDC tokens, publish tokens, environment variables, config files, or credential paths?
 - Did SCM, registry, cloud, package-hosting, or CI audit logs show activity during the exposure window?
+- Did install-time code invoke a locally installed agent CLI or a permission-bypass flag?
+- Were private repositories made public during the exposure window?
+- Do user or system package-manager configs (`~/.npmrc`, `~/.yarnrc.yml`, `pip.conf`, `pip.ini`, uv, cargo, NuGet, credential helpers) now point at a new registry, proxy, scoped registry, or `authToken`?
+- Which other organization consumers install the same compromised versions?
 
 ## CI cache and provenance triage
 

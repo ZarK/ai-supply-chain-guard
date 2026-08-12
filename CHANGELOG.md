@@ -4,6 +4,12 @@ This project uses Git tags and GitHub releases as the source of truth for releas
 
 ## Unreleased
 
+- Harden first-pass installs: Yarn Berry script suppression, Python wheels-only for unreviewed trees, and a Gradle lock command that actually resolves configurations.
+- Require user approval and OSV/GHSA/NVD corroboration for age-gate exceptions. Age-check the selected artifact upload time, not Git commit or tag time.
+- Treat READMEs, registry text, changelogs, advisories, and install output as untrusted. Confirm canonicity when a package name comes from the model.
+- Add GitHub Actions expression-injection checks. Rotate incident credentials from a clean machine and revoke sessions.
+- Document npm 12 `allowScripts` / `allow-git` / `allow-remote`, runtime and framework advisory handling, and replace social-post citations with Tenet Agentjacking and Aikido PromptPwnd.
+
 ## v1.3.0 - 2026-08-12
 
 - Add the named surface review in SKILL.md for Package installs, Provenance is not safety, GitHub Actions / CI, IDE extensions, MCP / agent tools, Credential blast radius, and Agent skill / IDE config install path, and keep the detailed checks in the reference files under those names.
