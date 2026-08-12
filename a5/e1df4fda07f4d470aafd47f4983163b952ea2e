@@ -1,0 +1,33 @@
+supply-chain-guard/references/attack-patterns.md
+  s_1a38c137c2489f::t_e732847344cb2e 32
+  s_1a38c137c2489f::t_29236f6379eb3b 38
+  s_1a38c137c2489f::t_cdd93438a1ddb0 158-159,161,163-164
+  s_1a38c137c2489f::t_fe976e364df7cc 13,16
+  s_1a38c137c2489f::t_016b18c976e1e0 25-26
+  s_1a38c137c2489f::t_6acc7b39c7cac3 190,192-195
+CHANGELOG.md
+  s_1a38c137c2489f::t_849ae7275a46ff 7
+supply-chain-guard/references/incident-response.md
+  s_1a38c137c2489f::t_4fa0c22c91cf82 78
+  s_1a38c137c2489f::t_4f8170a3dac11f 60,65
+  s_1a38c137c2489f::t_a4248494acf109 49-50
+  s_1a38c137c2489f::t_1dd43a4c48086d 71-72
+supply-chain-guard/SKILL.md
+  s_1a38c137c2489f::t_0ad75d99a7ee90 53,55-61,63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "a5e1df4fda07f4d470aafd47f4983163b952ea2e",
+  "prompts": {},
+  "sessions": {
+    "s_1a38c137c2489f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "63a30e17-1d25-40d4-a03d-9ed69389d417",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
