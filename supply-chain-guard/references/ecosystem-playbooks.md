@@ -22,7 +22,7 @@ Safe existing installs:
 - npm: `npm ci --ignore-scripts`
 - pnpm: `pnpm install --frozen-lockfile --ignore-scripts`
 - Yarn Classic: `yarn install --frozen-lockfile --ignore-scripts`
-- Yarn Berry: `yarn install --immutable --immutable-cache --check-cache`
+- Yarn Berry: `YARN_ENABLE_SCRIPTS=0 yarn install --immutable --immutable-cache --check-cache`. Berry has no `--ignore-scripts`. Use `YARN_ENABLE_SCRIPTS=0` or `--mode=skip-build`. Do not rely on a missing project `enableScripts: false`.
 - Bun: `bun install --frozen-lockfile --ignore-scripts`
 - Deno: use checked-in `deno.lock`; avoid lockfile refresh unless intentional.
 
@@ -30,12 +30,14 @@ Before adding packages:
 
 - Query npm metadata with `npm view <pkg>@<version> time dist.tarball dist.integrity repository maintainers scripts --json` or the registry API.
 - Install exact versions only, for example `npm install --save-exact --ignore-scripts <pkg>@<version>`.
-- Use native package-age gates where available: npm `min-release-age`, pnpm `minimumReleaseAge`, Yarn `npmMinimalAgeGate`, Bun `minimumReleaseAge`, and Deno `minimumDependencyAge` / `--minimum-dependency-age`.
-- Use native script approval where available: pnpm `approve-builds` / `allowBuilds`, Deno `approve-scripts`, Yarn `enableScripts: false` plus per-package `dependenciesMeta`, and Bun `trustedDependencies` after review.
+- Use native package-age gates where available: npm `min-release-age` (CLI 11.10.0+), pnpm `minimumReleaseAge`, Yarn `npmMinimalAgeGate`, Bun `minimumReleaseAge`, and Deno `minimumDependencyAge` / `--minimum-dependency-age`.
+- Use native script approval where available: npm 12+ `allowScripts` / `npm approve-scripts`, pnpm `approve-builds` / `allowBuilds`, Deno `approve-scripts`, Yarn `enableScripts: false` plus per-package `dependenciesMeta`, and Bun `trustedDependencies` after review. On npm 12+, also review `allow-git` and `allow-remote`. Do not set them to `all` to make CI pass.
 - Run provenance/signature checks where supported, such as `npm audit signatures`, but treat valid provenance as identity evidence rather than a safety verdict.
 - Treat `npx`, `npm create`, `pnpm dlx`, `yarn dlx`, `bunx`, `deno run`, and generator templates as code execution. Pin exact package versions or immutable URLs before use.
 - Inspect `scripts`, `bin`, entry points, loaders, package-manager plugins, framework auto-discovery metadata, `optionalDependencies`, `peerDependenciesMeta`, lifecycle hooks, and native binary download paths.
 - Watch lockfiles for registry host changes, tarball URL changes, integrity changes without version changes, provenance subject changes, source/digest reference changes, retargeted Git tags, and newly introduced Git dependencies.
+- Before install, look up provenance or attestations from the registry when published (`npm view` provenance fields, registry attestation APIs). "Expected" means the attestation repository and workflow match the registry metadata repository. Absent provenance raises review depth. Downgraded provenance blocks until the user approves.
+- If you invented a package name, confirm it is the canonical package before install. Prefer names the codebase already uses.
 
 ## Python
 
@@ -44,19 +46,20 @@ Detect: `pyproject.toml`, `requirements*.txt`, `constraints*.txt`, `poetry.lock`
 Safe existing installs:
 
 - uv: `uv sync --locked` or `uv sync --frozen`
-- pip with hashes: `pip install --require-hashes -r requirements.txt`
+- pip for unreviewed trees: `pip install --only-binary=:all: --require-hashes -r requirements.txt`. `--require-hashes` alone still executes a correctly hashed sdist build backend.
 - pip 26.1+ with upload-time metadata: add `--uploaded-prior-to=P7D` or `P14D` for high-risk surfaces.
 - pip without hashes: install only in isolated environments and prefer adding hashes before broad changes.
-- Poetry: `poetry sync` without refreshing the lock unless dependency changes are intentional.
-- Pipenv: `pipenv sync` rather than `pipenv install` for existing locks.
+- Poetry for unreviewed trees: `POETRY_INSTALLER_ONLY_BINARY=:all: poetry sync`. `poetry sync` without only-binary can execute an sdist build backend even when the lock is hashed.
+- Pipenv for unreviewed trees: `PIP_ONLY_BINARY=:all: pipenv sync`. Same sdist-build caveat as pip. Prefer `pipenv sync` over `pipenv install` for existing locks.
+- rye: unmaintained, no security updates. Flag it and recommend uv.
 - Conda: use locked environment files where available; avoid unconstrained solves in privileged environments.
 
 Before adding packages:
 
-- Query PyPI JSON metadata for `upload_time_iso_8601`, file hashes, yanked status, project URLs, and classifiers.
+- Query PyPI JSON metadata for each selected file's `upload_time_iso_8601`, file hashes, yanked status, project URLs, and classifiers. A later wheel on an old version is a new artifact.
 - Pin exact versions with `==` in requirements or exact lock entries.
 - Use uv `exclude-newer` / `exclude-newer-package` where appropriate, and map private indexes explicitly to reduce dependency-confusion risk.
-- Avoid `setup.py` execution paths, arbitrary build backends, and source builds until reviewed; prefer wheels only (`--only-binary=:all:`) for high-risk installs when feasible.
+- Avoid `setup.py` execution paths, arbitrary build backends, and source builds until reviewed. For unreviewed trees, require wheels only (`--only-binary=:all:` or the poetry/pipenv equivalent).
 - Review entry points, plugins, import-time side effects, generated code hooks, startup modules, direct URLs, VCS refs, wheel/sdist changes, and index/source mapping changes.
 - Prefer PyPI Trusted Publishers and digital attestations for publishing, but still verify the expected workflow identity and source path.
 - Treat `pipx`, `uvx`, `python -m pip`, `poetry run`, and project scaffolding tools as code execution.
@@ -101,7 +104,7 @@ Detect: `pom.xml`, `mvnw`, `.mvn/`, `build.gradle`, `build.gradle.kts`, `setting
 Safe existing installs:
 
 - Maven: prefer pinned plugin versions, repository governance, checksum fail-closed policy, and Maven Enforcer rules such as `banDynamicVersions`.
-- Gradle: use dependency locking and dependency verification metadata for application builds.
+- Gradle: use dependency locking and dependency verification metadata for application builds. Write locks with `./gradlew dependencies --write-locks`. In a multi-project build, run that task per subproject. `./gradlew --write-locks` with no task writes nothing and exits 0.
 - Do not update wrappers, plugins, or dependency ranges casually.
 
 Before adding dependencies:
@@ -153,6 +156,7 @@ Safe existing installs:
 Before adding packages:
 
 - Pin versions, review Packagist metadata, repository URLs, abandoned status, plugins, autoload changes, branch aliases, VCS/path repositories, and whether old tags or source references were retargeted.
+- Before trusting a registry version that resolves through a Git tag, verify the tag commit is on the expected publisher repository, matches the expected tree, and was not retargeted to a fork.
 - Treat Composer plugins, scripts, `autoload.files`, framework package discovery, service providers, and generated autoloaders as code execution. `--no-scripts --no-plugins` does not prevent code from running later when `vendor/autoload.php`, a framework, a test runner, or a CLI loads the dependency graph.
 
 ## CI actions, reusable workflows, and release automation
@@ -164,14 +168,16 @@ Safe defaults:
 - Pin third-party actions and reusable workflows to immutable commit SHAs where the platform supports it.
 - Treat tag and branch references as mutable dependency versions.
 - Treat new or modified CI `run` blocks as executable dependency code, especially in jobs with write tokens, secrets, OIDC, cache/artifact writes, publish steps, or deploy permissions.
-- Avoid `pull_request_target` or equivalent privileged fork events for workflows that check out, install, build, cache, or run untrusted code.
+- Avoid privileged triggers (`pull_request_target`, `workflow_run`, `issue_comment`, `pull_request_review`, untrusted `repository_dispatch`) for workflows that check out, install, build, cache, or run untrusted code.
+- Never interpolate untrusted `github.event.*` or `github.head_ref` into a `run:` script. Pass the value through `env:` and quote it.
+- Treat artifacts and metadata from a `workflow_run` triggering run as untrusted. Do not execute or interpolate them.
 - Do not let untrusted pull request jobs write caches or artifacts that privileged release/deploy jobs later restore.
 - Prefer clean release installs from reviewed lockfiles over restored mutable caches.
 - Use OIDC/trusted publishing with protected environments and tightly scoped publish jobs, but do not treat valid provenance as proof the workflow was safe.
 
 ## IDE extensions, MCP servers, and AI-agent tooling
 
-Detect: `.vscode/extensions.json`, `.vscode/settings.json`, Open VSX/VSIX manifests, JetBrains plugin config, browser extensions used for development, `.mcp.json`, `mcp.json`, `claude_desktop_config.json`, `.claude/`, `.cursor/`, `.windsurf/`, agent tool manifests, and local tool permission files.
+Detect: `.vscode/extensions.json`, `.vscode/settings.json`, Open VSX/VSIX manifests, JetBrains plugin config, browser extensions used for development, `.mcp.json`, `mcp.json`, `claude_desktop_config.json`, `.claude/`, `.cursor/`, `.windsurf/`, `.gitmodules`, `.devcontainer/`, `.envrc`, `mise.toml`, agent tool manifests, and local tool permission files.
 
 Safe defaults:
 
@@ -179,6 +185,45 @@ Safe defaults:
 - Pin versions or immutable releases where supported.
 - Review extension dependencies, extension packs, activation events, bundled JavaScript, hidden Unicode, native binaries, marketplace publisher changes, project instruction files, hook configs, and external configuration URLs.
 - Review tool permissions for shell execution, filesystem access, network access, environment-variable access, and credential-store access.
+
+## Models, datasets, and CDN scripts
+
+Treat model and dataset pulls as code execution:
+
+- Pin an immutable revision or digest. Do not follow a floating `main` or `latest` revision.
+- Prefer safetensors over pickle-format weights. Pickle executes code on load.
+- Do not set `trust_remote_code=True` without review. That flag runs repository code.
+- Apply the same age and source-trust checks to the hub account as to a package publisher.
+
+Treat third-party CDN `<script>` and stylesheet tags as remotely mutable executable code:
+
+- Pin the URL to a version or content digest.
+- Require Subresource Integrity (`integrity`) and `crossorigin`, or vendor the file into the repository.
+- Treat a CDN domain-ownership change as a trust event.
+
+## Git submodules, devcontainers, and activation hooks
+
+Detect: `.gitmodules`, `.git/modules/`, `.devcontainer/`, `.devcontainer.json`, `devcontainer.json`, `.envrc`, `mise.toml`, `.mise.toml`, direnv and asdf/mise hook files.
+
+- A submodule entry plus a build or test step imports arbitrary code with no package manifest. Pin the submodule to an immutable commit. Review it like a Git dependency.
+- `postCreateCommand`, `postStartCommand`, and third-party devcontainer features run code, often as root, when the container is created or reopened. Review the definition before using a container for isolation.
+- `.envrc`, mise, and similar activation hooks run on directory entry. Do not enter an untrusted clone with those hooks enabled.
+
+## Runtime and framework advisories
+
+When an advisory targets a language runtime, stdlib, or bundled extension:
+
+- Check the exact runtime version and whether the extension or module is enabled.
+- Audit the affected API surface in application code.
+- Prefer OS or container package pins and vendor fixed versions.
+- Disable unused extensions or modules.
+
+When the advisory is a vendor framework or application security release:
+
+- Identify affected major lines and exact fixed versions.
+- Review application-config impact such as auth, middleware, and defaults.
+- Use the cooldown-exception path in `SKILL.md` if the fixed version is younger than the age gate.
+- Do not run a package-malware indicator hunt as the primary response.
 
 ## Containers and OS packages
 

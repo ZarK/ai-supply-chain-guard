@@ -116,7 +116,7 @@ Use the skill before touching any of these:
 - GitHub Actions, reusable workflows, workflow templates, CI caches, artifacts, release jobs, or publish pipelines
 - Dockerfiles, container image references, binary downloads, one-line shell installers, or generated toolchains
 - VS Code/Open VSX/Cursor/Windsurf/JetBrains extensions, MCP configs, AI-agent tools, or automation permissions
-- active advisories, suspicious dependency changes, unexpected scripts, new transitive sources, or suspected credential exposure
+- active advisories, suspected compromise, publish or release authentication failures, suspicious dependency changes, unexpected scripts, new transitive sources, or suspected credential exposure
 
 ## Compatibility Pattern
 
@@ -173,7 +173,7 @@ This skill changes agent behavior. It should be paired with real controls where 
 
 - install-time malware blocking, registry proxying, or package intelligence on developer machines and CI runners
 - exact versions, frozen installs, checked-in lockfiles, and lifecycle scripts disabled by default
-- native package-age gates such as npm `min-release-age`, pnpm `minimumReleaseAge`, Yarn `npmMinimalAgeGate`, Bun `minimumReleaseAge`, Deno `minimumDependencyAge`, uv `exclude-newer`, and pip `--uploaded-prior-to`
+- native package-age gates such as npm `min-release-age` (CLI 11.10.0+), pnpm `minimumReleaseAge`, Yarn `npmMinimalAgeGate`, Bun `minimumReleaseAge`, Deno `minimumDependencyAge`, uv `exclude-newer`, and pip `--uploaded-prior-to`
 - dependency review, vulnerability alerts, code scanning, secret scanning with push protection, signed commits, and repository rulesets
 - trusted publishing, short-lived OIDC credentials, protected release environments, and artifact/provenance verification
 - isolated dev containers, VMs, Codespaces, or short-lived runners for risky dependency work
@@ -257,6 +257,8 @@ Agent and editor setup references:
 
 Incident case studies:
 
+- [Tenet: Agentjacking coding agents with fake Sentry errors](https://tenetsecurity.ai/blog/agentjacking-coding-agents-with-fake-sentry-errors/)
+- [Aikido: PromptPwnd GitHub Actions AI agents](https://www.aikido.dev/blog/promptpwnd-github-actions-ai-agents)
 - [TanStack: npm supply-chain compromise postmortem](https://tanstack.com/blog/npm-supply-chain-compromise-postmortem)
 - [Socket: TanStack npm packages compromised in Mini Shai-Hulud attack](https://socket.dev/blog/tanstack-npm-packages-compromised-mini-shai-hulud-supply-chain-attack)
 - [Aikido: Mini Shai-Hulud is back, TanStack and other packages compromised](https://www.aikido.dev/blog/mini-shai-hulud-is-back-tanstack-compromised)
@@ -276,6 +278,7 @@ Package-manager and registry controls:
 
 - [npm Docs: Config](https://docs.npmjs.com/cli/v11/using-npm/config)
 - [npm Docs: Trusted publishing](https://docs.npmjs.com/trusted-publishers/)
+- [npm v12 breaking changes](https://github.blog/changelog/2026-06-09-upcoming-breaking-changes-for-npm-v12/)
 - [pnpm Docs: Settings](https://pnpm.io/settings)
 - [Yarn Docs: Security](https://yarnpkg.com/features/security)
 - [Bun Docs: bun install](https://bun.com/docs/pm/cli/install)
