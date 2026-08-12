@@ -16,6 +16,25 @@ Where supported, enforce the 7-day/14-day age policy in package-manager configur
 
 Cooldowns can delay urgent vulnerability fixes. Use the security-fix exception path from `SKILL.md` instead of globally lowering gates.
 
+## JavaScript and TypeScript manager selection
+
+Use this decision order before running any JavaScript/TypeScript package manager:
+
+1. Detect the `packageManager` field, lockfiles, workspace configuration, CI install commands, release automation, and contributor documentation.
+2. Preserve the project's exact pinned manager when one is established. Do not introduce a second manager, generate a competing lockfile, or run one manager's scripts against another manager's installed dependency tree.
+3. For a new or genuinely unpinned project, prefer pnpm. Pin an exact pnpm version in `package.json`, commit `pnpm-lock.yaml`, and adopt the hardened `pnpm-workspace.yaml` policy below.
+4. For an npm-managed project whose user or organization wants pnpm, make migration a separately authorized and reviewed change. If migration is outside scope, keep npm as the compatibility path and report pnpm as a future hardening option.
+
+Reviewed npm-to-pnpm migration checklist:
+
+- Record the current Node and npm versions, package-manager field, workspace layout, registry/auth configuration, scripts, CI/release commands, lockfile status, and any dependency build exceptions.
+- Pin the chosen exact pnpm version before use. Run `pnpm import` against the existing lock with lifecycle scripts disabled by project policy, then inspect the resulting resolution and source changes before any build or test.
+- Add the hardened `pnpm-workspace.yaml` policy, including the age gate, trust policy, strict dependency-build handling, and committed `allowBuilds` decisions for reviewed exceptions.
+- Remove the obsolete lockfile in the same reviewed change; never leave competing lockfiles or ambiguous CI commands.
+- Start from a clean dependency tree. Do not run `pnpm run` against `node_modules` produced by npm.
+- Perform the first install with `pnpm install --frozen-lockfile --ignore-scripts`. Review ignored or required builds with `pnpm approve-builds`, approve only necessary identities, commit the resulting `allowBuilds` decisions, then repeat the locked install and verify build, test, start, packaging, CI, and release behavior.
+- Inspect the final manifest, lockfile, workspace config, CI, docs, and repository diff for unintended dependency, registry, script, or source changes.
+
 ## npm
 
 Project `.npmrc`:

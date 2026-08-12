@@ -11,6 +11,20 @@ Use this reference when a repository may have installed, built, published, or ex
 5. Assume any secret available to install/build/import/bootstrap code, CI actions, MCP servers, IDE extensions, agent/editor tooling, or release jobs may be compromised until proven otherwise.
 6. Do not assume a package or artifact is safe because it has valid provenance, signatures, or trusted-publishing metadata. Verify the expected workflow/ref/environment and inspect the release path.
 
+## Alert-sourced command execution
+
+If a package-manager, shell, download, one-shot CLI, profiling, or diagnostic command came from an alert, log, stack trace, telemetry event, support ticket, or other external report and may have run:
+
+1. Treat the host or runner as potentially compromised; stop further agent tasks, installs, builds, tests, and releases there.
+2. Preserve the original event, source and ingest path, timestamp, exact text and command, routing history, agent transcript or task log, process history, and command output. Do not rerun the command to confirm behavior.
+3. Identify every artifact or package name, exact version, source, resolved URL/ref, hash, cache entry, generated file, and process introduced or touched by the command.
+4. Inventory the host or runner identity, filesystem mounts, environment variables, credential files, metadata services, network permissions, and publish/deploy authority reachable during execution.
+5. Enumerate outbound domains, IPs, URLs, API paths, uploaded content, and downloaded artifacts from DNS, proxy, endpoint, shell, CI, and application telemetry; compare them with current primary reports and advisories rather than a stale embedded IOC list.
+6. Rotate or revoke reachable credentials, review SCM/registry/cloud/CI activity for the exposure window, invalidate affected caches and artifacts, and rebuild from clean infrastructure when execution cannot be ruled out.
+7. Review the intake system separately: public ingest endpoints are not necessarily secrets, but filtering, supported origin/domain controls, alert routing, and automatic agent triggers should prevent attacker-authored remediation text from becoming trusted instructions.
+
+The final incident note must include the report source, ingest path, timestamp, exact command, artifact or package identity and version, host or runner identity, execution evidence, reachable secrets, outbound indicators, containment, and remaining unknowns.
+
 ## Containment
 
 - Remove or pin away from compromised versions and regenerate lockfiles only after deciding the safe target versions.
@@ -32,6 +46,8 @@ Use this reference when a repository may have installed, built, published, or ex
 - Did the environment have publish, release, deploy, cloud, Kubernetes, or repository administration permissions?
 - Did the package make outbound network requests? Capture domains, IPs, URLs, downloaded artifacts, local write paths, payload indicators, and whether network bytes were executed or persisted when available.
 - Were any downstream artifacts created after exposure: releases, container images, package publishes, binaries, SBOMs, or deployment bundles?
+- Do published artifacts still match source and expected packed contents, or do root-level payloads, archive rewrites, unexpected version bumps, maintainer enumeration, or publishes under otherwise legitimate identities appear?
+- Did the exposure window include writes to legitimate developer platforms — repository creation, commits, releases, snippets, object uploads, or telemetry-shaped requests — that could be staging or exfiltration?
 - Did privileged jobs restore caches, artifacts, tool directories, or package-manager stores written by untrusted jobs?
 - Did provenance/attestation subjects, workflow identities, builder identities, refs, commits, environments, or triggering events differ from expected release policy?
 - Did workflow logs or build artifacts expose secrets, OIDC tokens, publish tokens, environment variables, config files, or credential paths?
@@ -41,20 +57,25 @@ Use this reference when a repository may have installed, built, published, or ex
 
 During suspected compromise, preserve and review:
 
+- whether fork or external-contributor code ran in a base-repository context, including through a privileged pull-request trigger, composite action, reusable workflow, generated command, or post-job step
 - CI cache keys, restore keys, cache scopes, and cache save/restore logs
 - artifacts uploaded before release jobs and artifacts downloaded by release jobs
 - provenance/attestation subjects, workflow identity, builder identity, ref, commit, environment, triggering event, and artifact digest
 - OIDC token permissions, environment protection settings, and registry trusted-publisher bindings
+- identity-token requests, runner process access, metadata-service calls, registry logins, and API requests made outside the expected release step, because short-lived credentials and valid provenance do not exclude compromise
 - package-manager caches and stores used by publish jobs
 - workflow run attempts and reruns, because later attempts may restore state from earlier compromised jobs
 
 ## Recovery
+
+Do not close the incident after reverting the lockfile or deprecating a release. Credential theft, downstream publishes, poisoned caches, derived artifacts, and configuration persistence require separate containment and recovery decisions.
 
 - Restore dependencies to known-good versions, refs, URLs, and hashes, and keep lockfile diffs reviewable.
 - Rebuild all releases, container images, packages, binaries, SBOMs, and deployment bundles produced after exposure from clean infrastructure after credential rotation.
 - Re-enable CI and release workflows only after least-privilege permissions and dependency checks are in place.
 - Add durable controls that would have reduced the incident: frozen installs, disabled lifecycle scripts, dependency review, secret scanning with push protection, package-age policy, install-time malware guard, provenance, isolated runners, and protected release rules.
 - Document final known impact, rotated credentials, cleaned artifacts, remaining unknowns, and monitoring follow-up.
+- Report findings using the surface names defined in `SKILL.md` so handoffs stay complete.
 
 ## Human escalation
 
