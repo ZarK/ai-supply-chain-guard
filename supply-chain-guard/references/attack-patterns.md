@@ -25,11 +25,11 @@ Use this reference when reviewing a dependency change, investigating a named cam
 - Package-manager-native warnings about blocked young versions, unreviewed build scripts, trust downgrades, ignored builds, or exotic sources.
 - Age-gate or script-approval bypass lists growing without documented review.
 
-## A–G generalized surface checks
+## Surface review
 
 Apply these checks to the new, changed, generated, installed, or about-to-run surface. They are behavior-based and deliberately avoid campaign package lists.
 
-### A — Package installs
+### Package installs
 
 Review manifests, lockfiles, package-manager config, nested manifests, distributed artifact contents, and the exact command that will run. Look for lifecycle/build/prepare hooks, bootstrap or import-time execution, native components, binary downloaders, optional or platform-specific execution paths, Git/tarball/URL sources, custom registries, dependency overrides, generated files, and package-manager changes. A one-shot CLI or generator is an install-and-execute event even when it leaves no manifest entry.
 
@@ -41,7 +41,7 @@ Treat these as high-signal behaviors:
 - Downloaded bytes are written to a cache, temporary path, tool directory, or workspace and then interpreted, imported, executed, or consumed by a later privileged job.
 - The command uses a floating version, mutable ref, unreviewed source, disabled integrity/TLS controls, or a package-manager policy bypass.
 
-### B — Provenance is not safety
+### Provenance is not safety
 
 Verify provenance, signatures, attestations, checksums, trusted-publisher identity, and transparency records, but keep origin separate from behavior. Suspicious patterns include:
 
@@ -53,7 +53,7 @@ Verify provenance, signatures, attestations, checksums, trusted-publisher identi
 
 Do not clear a finding solely because verification succeeds. Compare the verified artifact with reviewed source and expected release behavior.
 
-### C — GitHub Actions
+### GitHub Actions / CI
 
 Review workflow triggers, expressions, checked-out refs, inline commands, actions, reusable workflows, permissions, environments, runners, caches, artifacts, release steps, and post-job behavior. Look for:
 
@@ -65,13 +65,13 @@ Review workflow triggers, expressions, checked-out refs, inline commands, action
 - OIDC or other release credentials available before the narrow publish step, requested during unexpected steps, or usable by arbitrary code on the runner.
 - Reruns, failed jobs, post-job hooks, or persistent self-hosted runners carrying attacker-controlled state across trust boundaries.
 
-### D — IDE extensions
+### IDE extensions
 
 Review the extension artifact and its dependency graph, not just its marketplace page. Check publisher history, ownership changes, source-repository match, exact version, signature, hashes where available, update channel, extension packs/dependencies, activation events, bundled/minified code, native binaries, install/update scripts, network downloads, and declared capabilities.
 
 Flag extensions that activate broadly or before a relevant file is opened; add tasks, debug profiles, terminals, authentication providers, language servers, or workspace settings; read broad filesystem or browser state; spawn processes; download executable content; silently install companion extensions; switch marketplace/update endpoints; or request access unrelated to their stated purpose. Treat workspace recommendations as untrusted suggestions, not approval to install.
 
-### E — MCP and agent tools
+### MCP / agent tools
 
 Review local and remote MCP servers, agent plugins, tool manifests, tool descriptions, connection config, and launch wrappers as executable dependencies. Check exact source/version, command and arguments, environment inheritance, working directory, transports and endpoints, authentication flow, update mechanism, available tools/resources/prompts, and approval defaults.
 
@@ -83,13 +83,13 @@ Flag tools that:
 - Auto-approve calls, cross trust domains without a visible boundary, follow redirects to unreviewed hosts, or update independently of the pinned project configuration.
 - Persist by editing agent rules, skills, hooks, permissions, startup config, or other tool definitions.
 
-### F — Credential blast radius
+### Credential blast radius
 
 Model exposure from what the process could reach, not only what it demonstrably stole. Inventory environment variables, dotfiles, package-manager and SCM auth, SSH material, cloud credentials and metadata services, workload identity/OIDC, cluster credentials, signing keys, password-manager or wallet exports, browser sessions, mounted secrets, CI variables, and registry/release/deploy authority.
 
 Review process trees, filesystem reads, environment enumeration, metadata calls, credential-helper use, browser or keychain access, outbound requests, archive creation, encoding/encryption, and writes to legitimate developer services. If dependency, extension, MCP, agent, build, or diagnostic code executed with access, scope containment and rotation to every reachable identity and downstream publish/deploy path; lack of a known exfiltration domain is not proof of no exposure.
 
-### G — Agent skill and IDE config install path
+### Agent skill / IDE config install path
 
 Resolve the exact destination before installation: repository-local, workspace, user, profile, machine, container/image, or global agent/IDE path. Check path precedence, discovery rules, symlinks/junctions, ignored and hidden files, alternate profiles, remote-development hosts, generated config, and whether the installer writes outside the approved destination. A safe-looking project copy does not rule out a higher-precedence user or global foothold.
 
@@ -252,7 +252,7 @@ When reporting findings, include:
 
 - exact file and line where the risk appears
 - package name, selected version, source URL, and lockfile entry
-- applicable A–G surface and the expected versus observed behavior
+- applicable surface review name and the expected versus observed behavior
 - verified provenance/integrity facts separately from the safety assessment
 - exact extension, MCP/tool, skill, or config identity and installed path when applicable
 - whether the finding is known-malicious, suspicious, or expected

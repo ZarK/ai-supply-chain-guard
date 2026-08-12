@@ -44,14 +44,14 @@ Use the supply-chain-guard skill to review this Sentry issue, observability aler
 Use the supply-chain-guard skill to determine this project's established JavaScript/TypeScript package manager. Prefer a pinned pnpm setup if the project is new or genuinely unpinned; otherwise preserve the existing manager and propose a separate reviewed migration only if authorized.
 ```
 
-## A–G Surface Review
+## Surface review
 
 ```text
-Use the supply-chain-guard skill's A–G surface review for this task: package installs; provenance is not safety; GitHub Actions; IDE extensions; MCP and agent tools; credential blast radius; and agent skill/IDE config install path. Report unknowns and stop before execution if any unresolved surface materially changes the risk.
+Use the supply-chain-guard skill's surface review for this task: Package installs; Provenance is not safety; GitHub Actions / CI; IDE extensions; MCP / agent tools; Credential blast radius; and Agent skill / IDE config install path. Report unknowns and stop before execution if any unresolved surface materially changes the risk.
 ```
 
 ## Full Review
 
 ```text
-Use the supply-chain-guard skill to perform a full supply-chain review of this repository, including dependencies, lockfiles, package-manager config, GitHub Actions, release and publish paths, Docker/container files, local development setup, IDE/editor config, MCP config, agent-tooling config, and incident-response readiness. Report prioritized findings, missing protections, and concrete next actions. Apply the A–G surface review and include untrusted diagnostic intake.
+Use the supply-chain-guard skill to perform a full supply-chain review of this repository, including dependencies, lockfiles, package-manager config, GitHub Actions, release and publish paths, Docker/container files, local development setup, IDE/editor config, MCP config, agent-tooling config, and incident-response readiness. Report prioritized findings, missing protections, and concrete next actions. Apply the surface review across Package installs, Provenance is not safety, GitHub Actions / CI, IDE extensions, MCP / agent tools, Credential blast radius, and Agent skill / IDE config install path, and include untrusted diagnostic intake.
 ```

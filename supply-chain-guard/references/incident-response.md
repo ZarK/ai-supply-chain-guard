@@ -83,17 +83,17 @@ During suspected compromise, preserve and review:
 - Add durable controls that would have reduced the incident: frozen installs, disabled lifecycle scripts, dependency review, secret scanning with push protection, package-age policy, install-time malware guard, provenance, isolated runners, and protected release rules.
 - Document final known impact, rotated credentials, cleaned artifacts, remaining unknowns, and monitoring follow-up.
 
-## A–G incident record
+## Surface review
 
 Use the same surface names as the main skill so handoffs remain complete:
 
-- **A — Package installs:** exact install/restore/generator command, package or tool identity and version, source/ref/URL, manifests and lockfiles, scripts/hooks, artifact contents, caches, outputs, timestamps, and execution evidence.
-- **B — Provenance is not safety:** hashes, signatures, attestations, provenance subject, builder, workflow/ref/environment, packed-content comparison, and whether verified release infrastructure was attacker-influenced.
-- **C — GitHub Actions:** affected workflows, triggers, refs, jobs, reruns, runners, inline commands, caches, artifacts, permissions, OIDC requests, releases, publishes, and untrusted-to-privileged transitions.
-- **D — IDE extensions:** extension identity/version/source, publisher, signature, dependencies, activation, updates, tasks/settings, native or downloaded code, permissions, installed paths, and evidence of execution.
-- **E — MCP and agent tools:** server/tool identity and version, launch command, arguments, environment, transport/endpoints, authentication, available capabilities, approvals, configuration changes, and calls made.
-- **F — Credential blast radius:** host or runner identity, reachable environment variables, files, mounts, metadata services, sessions, credentials, signing/publish/deploy authority, outbound activity, rotations, and downstream audit results.
-- **G — Agent skill and IDE config install path:** intended and actual project/user/global destinations, precedence, symlinks, skill/instruction/config diffs, hooks/tasks/permissions, writes outside scope, persistence found, cleanup, and clean reinstallation evidence.
+- **Package installs:** exact install/restore/generator command, package or tool identity and version, source/ref/URL, manifests and lockfiles, scripts/hooks, artifact contents, caches, outputs, timestamps, and execution evidence.
+- **Provenance is not safety:** hashes, signatures, attestations, provenance subject, builder, workflow/ref/environment, packed-content comparison, and whether verified release infrastructure was attacker-influenced.
+- **GitHub Actions / CI:** affected workflows, triggers, refs, jobs, reruns, runners, inline commands, caches, artifacts, permissions, OIDC requests, releases, publishes, and untrusted-to-privileged transitions.
+- **IDE extensions:** extension identity/version/source, publisher, signature, dependencies, activation, updates, tasks/settings, native or downloaded code, permissions, installed paths, and evidence of execution.
+- **MCP / agent tools:** server/tool identity and version, launch command, arguments, environment, transport/endpoints, authentication, available capabilities, approvals, configuration changes, and calls made.
+- **Credential blast radius:** host or runner identity, reachable environment variables, files, mounts, metadata services, sessions, credentials, signing/publish/deploy authority, outbound activity, rotations, and downstream audit results.
+- **Agent skill / IDE config install path:** intended and actual project/user/global destinations, precedence, symlinks, skill/instruction/config diffs, hooks/tasks/permissions, writes outside scope, persistence found, cleanup, and clean reinstallation evidence.
 
 ## Human escalation
 
