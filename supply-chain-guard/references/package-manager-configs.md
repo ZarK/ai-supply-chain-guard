@@ -62,7 +62,7 @@ npm approve-scripts <pkg>
 npm deny-scripts <pkg>
 ```
 
-`npm approve-scripts` writes `allowScripts` in `package.json`. Prefer version-pinned approvals. `ignore-scripts=true` still wins over the allowlist. Remove the blanket ignore only after the allowlist is reviewed and committed. Observe skipped-script warnings on npm 11.16+ before the v12 default flip. Never pass `--dangerously-allow-all-scripts` or set `allow-git=all` / `allow-remote=all` to silence those warnings.
+`npm approve-scripts` writes `allowScripts` in `package.json`. Prefer version-pinned approvals. `ignore-scripts=true` still wins over the allowlist. Remove the blanket ignore only after the allowlist is reviewed and committed. Observe skipped-script warnings on npm 11.16+ before the v12 default flip. Do not run `npm approve-scripts --all` or set `allow-git=all` / `allow-remote=all` only to make CI pass. If you snapshot current scripts with `--all`, review and deny unused entries in the same change.
 
 Use `npm ci --ignore-scripts` for existing projects. If lifecycle scripts are required, review the exact version, resolved URL, and integrity first, then run the narrowest trusted rebuild command. Run `npm audit signatures` where supported to verify registry signatures and provenance attestations for installed packages.
 
