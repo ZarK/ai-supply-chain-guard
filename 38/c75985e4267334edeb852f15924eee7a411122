@@ -1,0 +1,27 @@
+supply-chain-guard/references/incident-response.md
+  s_31dedb13493802::t_5e6b95f5e7ede8 86,90-96
+supply-chain-guard/SKILL.md
+  s_31dedb13493802::t_5e6b95f5e7ede8 52,56-62
+supply-chain-guard/references/attack-patterns.md
+  s_31dedb13493802::t_5e6b95f5e7ede8 28,32,44,56,68,74,86,92,255
+examples/README.md
+  s_31dedb13493802::t_5e6b95f5e7ede8 47,50,56
+CHANGELOG.md
+  s_31dedb13493802::t_5e6b95f5e7ede8 7,11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "38c75985e4267334edeb852f15924eee7a411122",
+  "prompts": {},
+  "sessions": {
+    "s_31dedb13493802": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ff6e5-bd5d-74e0-942b-e063bd3733fc",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
