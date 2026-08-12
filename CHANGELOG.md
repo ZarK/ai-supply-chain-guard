@@ -4,6 +4,8 @@ This project uses Git tags and GitHub releases as the source of truth for releas
 
 ## Unreleased
 
+## v1.4.0 - 2026-08-13
+
 - Harden first-pass installs: Yarn Berry script suppression, Python wheels-only for unreviewed trees, and a Gradle lock command that actually resolves configurations.
 - Require user approval and OSV/GHSA/NVD corroboration for age-gate exceptions. Age-check the selected artifact upload time, not Git commit or tag time.
 - Treat READMEs, registry text, changelogs, advisories, and install output as untrusted. Confirm canonicity when a package name comes from the model.
