@@ -262,6 +262,8 @@ Incident case studies:
 - [Aikido: Mini Shai-Hulud is back, TanStack and other packages compromised](https://www.aikido.dev/blog/mini-shai-hulud-is-back-tanstack-compromised)
 - [Socket: Active supply-chain attack compromises AntV packages on npm](https://socket.dev/blog/antv-packages-compromised)
 - [Aikido: Mini Shai-Hulud compromises hundreds of AntV packages](https://www.aikido.dev/blog/mini-shai-hulud-antv-npm-supply-chain-attack)
+- [Primary reporter note on alert-borne command injection](https://x.com/m4rio_eth/status/2062803361078890613)
+- [Primary reporter note on the same public-ingest alert pattern](https://x.com/sergeykarayev/status/2062645929979822145)
 
 Supply-chain security guidance:
 
