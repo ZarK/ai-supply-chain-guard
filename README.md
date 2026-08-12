@@ -173,7 +173,7 @@ This skill changes agent behavior. It should be paired with real controls where 
 
 - install-time malware blocking, registry proxying, or package intelligence on developer machines and CI runners
 - exact versions, frozen installs, checked-in lockfiles, and lifecycle scripts disabled by default
-- native package-age gates such as npm `min-release-age`, pnpm `minimumReleaseAge`, Yarn `npmMinimalAgeGate`, Bun `minimumReleaseAge`, Deno `minimumDependencyAge`, uv `exclude-newer`, and pip `--uploaded-prior-to`
+- native package-age gates such as npm `min-release-age` (CLI 11.10.0+), pnpm `minimumReleaseAge`, Yarn `npmMinimalAgeGate`, Bun `minimumReleaseAge`, Deno `minimumDependencyAge`, uv `exclude-newer`, and pip `--uploaded-prior-to`
 - dependency review, vulnerability alerts, code scanning, secret scanning with push protection, signed commits, and repository rulesets
 - trusted publishing, short-lived OIDC credentials, protected release environments, and artifact/provenance verification
 - isolated dev containers, VMs, Codespaces, or short-lived runners for risky dependency work
