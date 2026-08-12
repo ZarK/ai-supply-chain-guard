@@ -46,54 +46,36 @@ The final incident note must include the report source, ingest path, timestamp, 
 - Did the environment have publish, release, deploy, cloud, Kubernetes, or repository administration permissions?
 - Did the package make outbound network requests? Capture domains, IPs, URLs, downloaded artifacts, local write paths, payload indicators, and whether network bytes were executed or persisted when available.
 - Were any downstream artifacts created after exposure: releases, container images, package publishes, binaries, SBOMs, or deployment bundles?
+- Do published artifacts still match source and expected packed contents, or do root-level payloads, archive rewrites, unexpected version bumps, maintainer enumeration, or publishes under otherwise legitimate identities appear?
+- Did the exposure window include writes to legitimate developer platforms — repository creation, commits, releases, snippets, object uploads, or telemetry-shaped requests — that could be staging or exfiltration?
 - Did privileged jobs restore caches, artifacts, tool directories, or package-manager stores written by untrusted jobs?
 - Did provenance/attestation subjects, workflow identities, builder identities, refs, commits, environments, or triggering events differ from expected release policy?
 - Did workflow logs or build artifacts expose secrets, OIDC tokens, publish tokens, environment variables, config files, or credential paths?
 - Did SCM, registry, cloud, package-hosting, or CI audit logs show activity during the exposure window?
 
-## 2025–2026 chained campaign triage
-
-Recent campaigns require investigation beyond the changed dependency line:
-
-- **Untrusted-to-privileged automation:** determine whether fork or external-contributor code ran in a base-repository context, including through a privileged pull-request trigger, composite action, reusable workflow, generated command, or post-job step.
-- **Cache and artifact bridges:** identify every cache, package store, tool directory, artifact, workspace, or build output written by untrusted jobs and later restored or consumed by release, publish, deploy, or other credentialed jobs. Include reruns and failures.
-- **Runtime credentials:** review identity-token requests, runner process access, metadata-service calls, registry logins, and API requests made outside the expected release step. Short-lived credentials and valid provenance do not exclude compromise.
-- **Artifact mutation and propagation:** compare published artifacts with source and expected packed contents; review unexpected lifecycle/import hooks, optional or exotic sources, root-level payloads, archive rewrites, version bumps, maintainer enumeration, and publishes under otherwise legitimate identities.
-- **Legitimate-platform exfiltration:** review unexpected repository creation, commits, releases, snippets, object uploads, telemetry-like requests, and other writes to trusted developer services as potential staging or exfiltration.
-- **Developer-tool persistence:** inspect tracked, untracked, and relevant user-level editor tasks, agent settings, MCP/tool configuration, instruction files, hooks, startup files, scheduled tasks, services, and permission changes made during the exposure window.
-
-Do not close the incident after reverting the lockfile or deprecating a release. Credential theft, downstream publishes, poisoned caches, derived artifacts, and configuration persistence require separate containment and recovery decisions.
-
 ## CI cache and provenance triage
 
 During suspected compromise, preserve and review:
 
+- whether fork or external-contributor code ran in a base-repository context, including through a privileged pull-request trigger, composite action, reusable workflow, generated command, or post-job step
 - CI cache keys, restore keys, cache scopes, and cache save/restore logs
 - artifacts uploaded before release jobs and artifacts downloaded by release jobs
 - provenance/attestation subjects, workflow identity, builder identity, ref, commit, environment, triggering event, and artifact digest
 - OIDC token permissions, environment protection settings, and registry trusted-publisher bindings
+- identity-token requests, runner process access, metadata-service calls, registry logins, and API requests made outside the expected release step, because short-lived credentials and valid provenance do not exclude compromise
 - package-manager caches and stores used by publish jobs
 - workflow run attempts and reruns, because later attempts may restore state from earlier compromised jobs
 
 ## Recovery
+
+Do not close the incident after reverting the lockfile or deprecating a release. Credential theft, downstream publishes, poisoned caches, derived artifacts, and configuration persistence require separate containment and recovery decisions.
 
 - Restore dependencies to known-good versions, refs, URLs, and hashes, and keep lockfile diffs reviewable.
 - Rebuild all releases, container images, packages, binaries, SBOMs, and deployment bundles produced after exposure from clean infrastructure after credential rotation.
 - Re-enable CI and release workflows only after least-privilege permissions and dependency checks are in place.
 - Add durable controls that would have reduced the incident: frozen installs, disabled lifecycle scripts, dependency review, secret scanning with push protection, package-age policy, install-time malware guard, provenance, isolated runners, and protected release rules.
 - Document final known impact, rotated credentials, cleaned artifacts, remaining unknowns, and monitoring follow-up.
-
-## Surface review
-
-Use the same surface names as the main skill so handoffs remain complete:
-
-- **Package installs:** exact install/restore/generator command, package or tool identity and version, source/ref/URL, manifests and lockfiles, scripts/hooks, artifact contents, caches, outputs, timestamps, and execution evidence.
-- **Provenance is not safety:** hashes, signatures, attestations, provenance subject, builder, workflow/ref/environment, packed-content comparison, and whether verified release infrastructure was attacker-influenced.
-- **GitHub Actions / CI:** affected workflows, triggers, refs, jobs, reruns, runners, inline commands, caches, artifacts, permissions, OIDC requests, releases, publishes, and untrusted-to-privileged transitions.
-- **IDE extensions:** extension identity/version/source, publisher, signature, dependencies, activation, updates, tasks/settings, native or downloaded code, permissions, installed paths, and evidence of execution.
-- **MCP / agent tools:** server/tool identity and version, launch command, arguments, environment, transport/endpoints, authentication, available capabilities, approvals, configuration changes, and calls made.
-- **Credential blast radius:** host or runner identity, reachable environment variables, files, mounts, metadata services, sessions, credentials, signing/publish/deploy authority, outbound activity, rotations, and downstream audit results.
-- **Agent skill / IDE config install path:** intended and actual project/user/global destinations, precedence, symlinks, skill/instruction/config diffs, hooks/tasks/permissions, writes outside scope, persistence found, cleanup, and clean reinstallation evidence.
+- Report findings using the surface names defined in `SKILL.md` so handoffs stay complete.
 
 ## Human escalation
 

@@ -10,8 +10,10 @@ Use this reference when reviewing a dependency change, investigating a named cam
 - New or modified `preinstall`, `install`, `postinstall`, `prepare`, `prepack`, `build`, or equivalent lifecycle scripts.
 - New or modified import, bootstrap, autoload, framework discovery, plugin, service-provider, source-generation, or startup metadata.
 - New `optionalDependencies`, platform-specific packages, or binary downloader packages.
+- An optional or platform-specific component that runs a payload and then fails, so execution looks like a harmless ignored install error.
 - Newly added Git, tarball, HTTP, file path, or branch-based dependencies.
 - Nested manifests or generated files that introduce another package manager, runtime, CI command, hook, or tool config.
+- A package that ships manifests or tooling for another ecosystem, giving it a build or bootstrap path outside the reviewed one.
 - Obfuscated JavaScript, packed/minified installer code, base64 payloads, dynamic `eval`, `Function`, shell command construction, or environment-variable enumeration.
 - Code that reads home directories, shell history, `.npmrc`, `.pypirc`, `.netrc`, cloud credentials, SSH keys, kubeconfigs, package-manager tokens, GitHub tokens, CI variables, or password-manager exports.
 - Network calls from install-time, build-time, import-time, bootstrap-time, CI, or generated code, especially to paste sites, object storage, newly registered domains, URL shorteners, raw gist URLs, or unknown analytics endpoints.
@@ -20,76 +22,20 @@ Use this reference when reviewing a dependency change, investigating a named cam
 - Package metadata pointing to a repository that does not match the package name, scope, maintainers, or release history.
 - New or modified agent/editor instruction files, task definitions, hook configs, MCP/tool configs, local permission files, external config URLs, or hidden Unicode.
 - Valid provenance from an unexpected workflow, ref, environment, builder, or repository.
+- Valid provenance for an expected workflow after untrusted code, a poisoned cache, a mutable action, or a compromised builder influenced that workflow.
+- Source, registry metadata, packed artifact, SBOM, and provenance claims that disagree about repository, commit, dependencies, or included files.
 - A package or artifact that used to have stronger trust evidence and now has weaker or missing provenance/signature evidence.
 - Privileged release jobs restoring caches or artifacts created by pull request workflows.
 - Package-manager-native warnings about blocked young versions, unreviewed build scripts, trust downgrades, ignored builds, or exotic sources.
 - Age-gate or script-approval bypass lists growing without documented review.
 
-## Surface review
-
-Apply these checks to the new, changed, generated, installed, or about-to-run surface. They are behavior-based and deliberately avoid campaign package lists.
-
-### Package installs
-
-Review manifests, lockfiles, package-manager config, nested manifests, distributed artifact contents, and the exact command that will run. Look for lifecycle/build/prepare hooks, bootstrap or import-time execution, native components, binary downloaders, optional or platform-specific execution paths, Git/tarball/URL sources, custom registries, dependency overrides, generated files, and package-manager changes. A one-shot CLI or generator is an install-and-execute event even when it leaves no manifest entry.
-
-Treat these as high-signal behaviors:
-
-- A new hook, entry point, loader, plugin, service provider, source generator, or startup file executes after scripts were supposedly disabled.
-- An optional component runs a payload and then fails, making execution look like a harmless ignored install error.
-- A package contains manifests or tooling for another ecosystem; apply that ecosystem's checks before running its build or bootstrap path.
-- Downloaded bytes are written to a cache, temporary path, tool directory, or workspace and then interpreted, imported, executed, or consumed by a later privileged job.
-- The command uses a floating version, mutable ref, unreviewed source, disabled integrity/TLS controls, or a package-manager policy bypass.
-
-### Provenance is not safety
-
-Verify provenance, signatures, attestations, checksums, trusted-publisher identity, and transparency records, but keep origin separate from behavior. Suspicious patterns include:
-
-- Valid provenance for an expected workflow after untrusted code, a poisoned cache, a mutable action, or a compromised builder influenced that workflow.
-- A correct package/version label whose resolved URL, source/dist ref, tag target, digest, integrity value, builder, subject, or packed contents changed.
-- A release published from the expected identity but from an unexpected step, rerun, event, ref, environment, or failed job.
-- A trust downgrade: an artifact family that previously had attestations, signatures, immutable sources, or stronger builders suddenly does not.
-- Source, registry metadata, packed artifact, SBOM, and provenance claims that disagree about repository, commit, dependencies, or included files.
-
-Do not clear a finding solely because verification succeeds. Compare the verified artifact with reviewed source and expected release behavior.
-
-### GitHub Actions / CI
-
-Review workflow triggers, expressions, checked-out refs, inline commands, actions, reusable workflows, permissions, environments, runners, caches, artifacts, release steps, and post-job behavior. Look for:
-
-- Untrusted pull-request or fork code executing in a base-repository or otherwise privileged context.
-- A workflow that checks out an attacker-controlled ref and then installs, builds, tests, generates, or runs it with secrets, write permissions, or base-repository cache scope.
-- Cache, artifact, package-store, tool-directory, workspace, or build-output writes from untrusted jobs that privileged jobs later restore or consume.
-- External actions or reusable workflows pinned to mutable tags/branches, or nested reusable workflows that weaken the caller's assumptions.
-- New or modified `run` blocks that download and execute content, enumerate credentials, request identity tokens, publish, alter repository controls, or suppress useful logs.
-- OIDC or other release credentials available before the narrow publish step, requested during unexpected steps, or usable by arbitrary code on the runner.
-- Reruns, failed jobs, post-job hooks, or persistent self-hosted runners carrying attacker-controlled state across trust boundaries.
-
-### IDE extensions
-
-Review the extension artifact and its dependency graph, not just its marketplace page. Check publisher history, ownership changes, source-repository match, exact version, signature, hashes where available, update channel, extension packs/dependencies, activation events, bundled/minified code, native binaries, install/update scripts, network downloads, and declared capabilities.
-
-Flag extensions that activate broadly or before a relevant file is opened; add tasks, debug profiles, terminals, authentication providers, language servers, or workspace settings; read broad filesystem or browser state; spawn processes; download executable content; silently install companion extensions; switch marketplace/update endpoints; or request access unrelated to their stated purpose. Treat workspace recommendations as untrusted suggestions, not approval to install.
-
-### MCP / agent tools
-
-Review local and remote MCP servers, agent plugins, tool manifests, tool descriptions, connection config, and launch wrappers as executable dependencies. Check exact source/version, command and arguments, environment inheritance, working directory, transports and endpoints, authentication flow, update mechanism, available tools/resources/prompts, and approval defaults.
-
-Flag tools that:
-
-- Launch through a floating package runner, remote installer, mutable branch, shell wrapper, or opaque downloaded binary.
-- Receive broad environment variables or credential paths through config, or gain shell/filesystem/network/browser/email/memory access beyond the task.
-- Present tool descriptions, resources, prompts, errors, or remote content that instruct the agent to weaken policy, reveal local data, run unrelated commands, or expand permissions.
-- Auto-approve calls, cross trust domains without a visible boundary, follow redirects to unreviewed hosts, or update independently of the pinned project configuration.
-- Persist by editing agent rules, skills, hooks, permissions, startup config, or other tool definitions.
-
-### Credential blast radius
+## Credential blast radius
 
 Model exposure from what the process could reach, not only what it demonstrably stole. Inventory environment variables, dotfiles, package-manager and SCM auth, SSH material, cloud credentials and metadata services, workload identity/OIDC, cluster credentials, signing keys, password-manager or wallet exports, browser sessions, mounted secrets, CI variables, and registry/release/deploy authority.
 
 Review process trees, filesystem reads, environment enumeration, metadata calls, credential-helper use, browser or keychain access, outbound requests, archive creation, encoding/encryption, and writes to legitimate developer services. If dependency, extension, MCP, agent, build, or diagnostic code executed with access, scope containment and rotation to every reachable identity and downstream publish/deploy path; lack of a known exfiltration domain is not proof of no exposure.
 
-### Agent skill / IDE config install path
+## Agent skill / IDE config install path
 
 Resolve the exact destination before installation: repository-local, workspace, user, profile, machine, container/image, or global agent/IDE path. Check path precedence, discovery rules, symlinks/junctions, ignored and hidden files, alternate profiles, remote-development hosts, generated config, and whether the installer writes outside the approved destination. A safe-looking project copy does not rule out a higher-precedence user or global foothold.
 
@@ -209,8 +155,13 @@ rg -n 'exclude-newer|exclude-newer-package|uploaded-prior-to|extra-index-url|tru
 Review:
 
 - Workflows that run installs on pull requests with secrets available.
+- Untrusted pull-request or fork code executing in a base-repository or otherwise privileged context, including through composite actions, reusable workflows, generated commands, or post-job steps.
+- Workflows that check out an attacker-controlled ref and then install, build, test, generate, or run it with secrets, write permissions, or base-repository cache scope.
 - New or modified workflow permissions, OIDC configuration, publish jobs, release jobs, and registry login steps.
+- Release credentials or identity tokens available before the narrow publish step, requested during unexpected steps, or usable by arbitrary code on the runner.
 - Self-hosted runner usage and whether untrusted code can run on persistent machines.
+- Reruns, failed jobs, and post-job hooks that carry attacker-controlled state across a trust boundary into a later privileged run.
+- Nested reusable workflows that weaken the caller's permission, trigger, or ref assumptions.
 - Package publishing provenance and whether releases can be overwritten or mutated.
 - Branch protection or ruleset changes around the suspicious time window.
 - Third-party actions or reusable workflows pinned to tags/branches instead of full-length commit SHAs.
@@ -236,7 +187,12 @@ Review new or changed:
 - `.vscode/extensions.json`, `.vscode/settings.json`, Open VSX or VSIX manifests, JetBrains plugin config, browser extensions used for development, and extension lockfiles where present.
 - `.mcp.json`, `mcp.json`, `claude_desktop_config.json`, `.claude/`, `.cursor/`, `.windsurf/`, agent tool manifests, and local tool permission files.
 - Extension manifests containing `extensionPack`, `extensionDependencies`, broad activation events, bundled JavaScript, hidden Unicode, native binaries, or marketplace publisher changes.
+- Extensions that activate before a relevant file is opened, add tasks, debug profiles, terminals, authentication providers, or language servers, silently install companion extensions, or switch marketplace and update endpoints. Treat workspace recommendations as untrusted suggestions, not approval to install.
 - MCP/agent tool configs granting shell execution, broad filesystem access, network access, environment-variable access, or access to credential stores.
+- MCP servers or agent tools launched through a floating package runner, remote installer, mutable branch, shell wrapper, or opaque downloaded binary.
+- Tool descriptions, resources, prompts, errors, or remote content that instruct the agent to weaken policy, reveal local data, run unrelated commands, or expand permissions.
+- Tools that auto-approve calls, cross trust domains without a visible boundary, follow redirects to unreviewed hosts, or update independently of the pinned project configuration.
+- Extensions or tools that persist by editing agent rules, skills, hooks, permissions, startup config, or other tool definitions.
 
 Useful local searches:
 
