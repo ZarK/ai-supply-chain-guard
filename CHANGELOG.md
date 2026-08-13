@@ -4,6 +4,8 @@ This project uses Git tags and GitHub releases as the source of truth for releas
 
 ## Unreleased
 
+## v1.4.1 - 2026-08-13
+
 - Refresh the agentic install matrix. Document Grok Bot and Grok Build. Update tool paths against current vendor docs.
 
 ## v1.4.0 - 2026-08-13
