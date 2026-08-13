@@ -186,40 +186,42 @@ See [`examples/README.md`](examples/README.md) for short prompts covering reposi
 
 ## Install In Agentic Coding Tools
 
-Tool behavior changes quickly. Prefer the tool's current documentation when it differs from this table. The safest portable pattern is always the same: install `supply-chain-guard/` intact, then add a bridge instruction that points at the installed `SKILL.md`.
+Tool behavior changes quickly. Prefer the tool's current documentation when it differs from this table. The safest portable pattern is always the same: install `supply-chain-guard/` intact, then add a bridge instruction that points at the installed `SKILL.md`. When a tool supports `.agents/skills/`, use that folder first. Tool-specific directories are adapters, not a second copy of the skill.
 
 | Tool | Best install target | Agent setup instruction |
 | --- | --- | --- |
 | Devin | `.agents/skills/supply-chain-guard/SKILL.md` | Commit the portable skill folder. Ask Devin to use `supply-chain-guard` before dependency, package-manager, CI, release, IDE-extension, MCP, or agent-tool work. |
+| Grok Bot | `.agents/skills/supply-chain-guard/` or `~/.agents/skills/supply-chain-guard/` | Copy the portable skill folder to the project path or the user path. On Windows the user path is still `~/.agents/skills/supply-chain-guard/`. Add an `AGENTS.md` bridge. Shared assistant workflows must consume that same skill folder. Do not create a second copy. |
+| Grok Build | `.agents/skills/supply-chain-guard/`, `.grok/skills/supply-chain-guard/`, or `~/.grok/skills/supply-chain-guard/` | Prefer the portable `.agents/skills/` folder. Native adapters are `.grok/skills/` and `~/.grok/skills/`. Grok Build also reads `~/.agents/skills/` and `AGENTS.md`. |
 | Claude Code | `.claude/skills/supply-chain-guard/SKILL.md` or `~/.claude/skills/supply-chain-guard/SKILL.md` | Copy the skill folder to Claude Code's skills directory. Add a `CLAUDE.md` bridge if the project also needs repository-level activation. |
-| OpenAI Codex / Codex CLI | `.agents/skills/supply-chain-guard/` plus `AGENTS.md` | Commit the portable install and bridge. For global use, copy the skill folder into the user's global skills directory if the client supports skills. |
-| GitHub Copilot Coding Agent / Copilot Chat | `AGENTS.md` and `.github/copilot-instructions.md` | Commit the skill folder and add bridge text to repository instructions. |
-| VS Code Copilot Agent Mode | `AGENTS.md` or `.github/instructions/*.instructions.md` | Add a bridge that applies to manifests, lockfiles, workflows, Dockerfiles, release scripts, and agent/MCP config. |
-| Cursor | `.cursor/rules/supply-chain-guard.mdc` and/or `AGENTS.md` | Add a Cursor rule that points to `.agents/skills/supply-chain-guard/SKILL.md`. Use always-on activation when available. |
-| Windsurf Cascade | `.windsurf/rules/supply-chain-guard.md` and/or `AGENTS.md` | Add a workspace rule with the bridge text. Keep `AGENTS.md` for shared repository context. |
-| Sourcegraph Amp | `AGENTS.md` | Commit the bridge and keep the full skill under `.agents/skills/supply-chain-guard/`. |
+| OpenAI Codex / Codex CLI | `.agents/skills/supply-chain-guard/` or `~/.agents/skills/supply-chain-guard/` plus `AGENTS.md` | Commit the portable skill folder. Codex scans `.agents/skills` from the working directory up to the repository root. For user-wide use, copy the folder to `~/.agents/skills/`. |
+| GitHub Copilot Coding Agent / Copilot Chat | `.agents/skills/supply-chain-guard/`, `.github/skills/supply-chain-guard/`, `AGENTS.md`, and `.github/copilot-instructions.md` | Commit the portable skill folder. Copilot also loads `.github/skills/` and `.claude/skills/`. Keep the `AGENTS.md` and `.github/copilot-instructions.md` bridges. |
+| VS Code Copilot Agent Mode | `.agents/skills/supply-chain-guard/` or `.github/skills/supply-chain-guard/` plus `AGENTS.md` or `.github/instructions/*.instructions.md` | Commit the portable skill folder. Add a bridge that applies to manifests, lockfiles, workflows, Dockerfiles, release scripts, and agent/MCP config. |
+| Cursor | `.agents/skills/supply-chain-guard/` or `.cursor/skills/supply-chain-guard/` plus `AGENTS.md` | Commit the portable skill folder. Cursor also loads `.cursor/skills/` and `~/.agents/skills/`. A `.cursor/rules` file may point at the installed `SKILL.md`. Do not fork the skill. |
+| Windsurf Cascade / Devin Desktop | `.agents/skills/supply-chain-guard/` plus `.devin/rules/` or `.windsurf/rules/` and `AGENTS.md` | Devin Desktop prefers `.devin/rules/` and still reads `.windsurf/rules/`. Keep the portable skill folder and an `AGENTS.md` bridge. |
+| Sourcegraph Amp | `.agents/skills/supply-chain-guard/` plus `AGENTS.md` | Commit the portable skill folder. Amp loads project skills from `.agents/skills/` and personal skills from `~/.agents/skills/` or `~/.config/agents/skills/`. |
 | Google Gemini CLI | `GEMINI.md` and/or `AGENTS.md` | Add the bridge to `GEMINI.md`. Keep the portable skill in `.agents/skills/`. |
 | Google Jules | `AGENTS.md` | Jules-compatible setup is the portable `AGENTS.md` bridge plus the skill folder. |
 | Replit Agent | `.agents/skills/supply-chain-guard/SKILL.md`, `replit.md`, or `custom_instruction/instructions.md` | Include the skill folder in project templates. Add the bridge to project or organization instructions. |
-| JetBrains Junie | `.junie/AGENTS.md` or configured guidelines path | Add the bridge to Junie guidelines and keep the full skill in `.agents/skills/`. |
-| Amazon Q Developer CLI | Custom agent instructions or project prompt | Create a custom Q CLI agent or project instruction that points at the installed skill folder. |
-| Factory Droid | `.factory/skills/supply-chain-guard/SKILL.md`, `AGENTS.md`, or `.factory/droids/*.md` | Copy the skill folder to Factory skills when supported, and keep a portable bridge for shared repo context. |
-| OpenCode | `AGENTS.md` or `opencode.json` instructions | Commit the bridge in `AGENTS.md`; if explicit config is used, add the same bridge to `opencode.json` instructions. |
-| OpenHands | `.openhands/microagents/supply-chain-guard.md` | Add a repo microagent containing the bridge. Do not put dependency install commands in setup scripts unless they pass this skill's review. |
+| JetBrains Junie | `.agents/skills/supply-chain-guard/`, `.junie/skills/supply-chain-guard/`, and `.junie/AGENTS.md` or `AGENTS.md` | Keep the portable skill folder. Copy it to `.junie/skills/` when you want a Junie adapter. Add the bridge to `.junie/AGENTS.md` or root `AGENTS.md`. |
+| Kiro (formerly Amazon Q Developer CLI) | `.agents/skills/supply-chain-guard/`, `.kiro/skills/supply-chain-guard/`, or `~/.kiro/skills/supply-chain-guard/` | Prefer the portable folder. Copy it to `.kiro/skills/` or `~/.kiro/skills/` as a Kiro adapter. Keep an `AGENTS.md` bridge. Steering files are not a second copy of the skill. |
+| Factory Droid | `.agents/skills/supply-chain-guard/`, `.factory/skills/supply-chain-guard/SKILL.md`, or `AGENTS.md` | Prefer the portable folder. Factory also loads `.factory/skills/` and `~/.agents/skills/`. Keep an `AGENTS.md` bridge. |
+| OpenCode | `.agents/skills/supply-chain-guard/`, `.opencode/skills/supply-chain-guard/`, or `AGENTS.md` | Commit the portable skill folder. OpenCode also loads `.opencode/skills/` and `~/.agents/skills/`. Keep an `AGENTS.md` bridge. |
+| OpenHands | `.agents/skills/supply-chain-guard/` plus `AGENTS.md` | Prefer `.agents/skills/`. Legacy `.openhands/skills/` and `.openhands/microagents/` still load. Do not put dependency install commands in setup scripts unless they pass this skill's review. |
 | Aider | `CONVENTIONS.md` or configured read files | Add the bridge to `CONVENTIONS.md` or configure Aider to read a small file that points at `SKILL.md`. |
 | Cline | `.clinerules/supply-chain-guard.md` | Add a Cline rule with the bridge and keep the full skill in `.agents/skills/`. |
-| Roo Code | `.roo/rules/supply-chain-guard.md` | Add a Roo rule with the bridge. If Roo reads `AGENTS.md`, keep the portable bridge there too. |
+| Roo Code | Unsupported | The Roo Code extension shut down on 15 May 2026. Keep the portable skill folder and `AGENTS.md` for other tools. Do not add Roo-only rule files. |
 | Kilo Code | `.kilocode/rules/supply-chain-guard.md` and/or `AGENTS.md` | Add a Kilo rule with the bridge and keep the portable skill folder in the repository. |
 | Continue | `.continue/rules/supply-chain-guard.md` | Add a Continue rule that points to `.agents/skills/supply-chain-guard/SKILL.md`. |
-| Qodo Gen | Chat preferences custom instructions or `agents/*.toml` | Add the bridge under custom instructions, or create a custom agent/workflow TOML whose instructions point at the skill. |
-| Tabnine Agent | Custom command or chat custom instructions | Create a custom command such as `/supply-chain-guard` containing the bridge, or paste the bridge into custom instructions if available. |
-| Warp Agent Mode | `AGENTS.md` or Warp Drive Agent Prompt | Commit the portable bridge in `AGENTS.md`; optionally save the same bridge as a reusable Warp Agent Prompt. |
-| Zed Agent / ACP agents | `AGENTS.md` | Use the portable bridge in `AGENTS.md`; this also works when Zed drives compatible external coding agents. |
+| Qodo IDE plugin (formerly Qodo Gen) | Chat preferences custom instructions or `~/.qodo/agents/*.toml` | Add the bridge under custom instructions, or create a custom agent TOML whose instructions point at the skill. |
+| Tabnine Agent | `.tabnine/agent/commands/` or chat custom instructions | Create a custom command such as `/supply-chain-guard` that points at `SKILL.md`, or paste the bridge into custom instructions if available. |
+| Warp Agent Mode | `.agents/skills/supply-chain-guard/` plus `AGENTS.md` | Commit the portable skill folder. Warp also reads `.warp/skills/` and `~/.agents/skills/`. `AGENTS.md` remains the project rules file. |
+| Zed Agent / ACP agents | `.agents/skills/supply-chain-guard/` plus `AGENTS.md` | Commit the portable skill folder. Zed loads project skills from `.agents/skills/` and user skills from `~/.agents/skills/`. Keep `AGENTS.md` for ACP agents that do not load skills. |
 | Goose | `.agents/skills/supply-chain-guard/SKILL.md`, `~/.agents/skills/supply-chain-guard/SKILL.md`, `AGENTS.md`, or `.goosehints` | Goose supports portable skills. Use project install for repos and global install for user-wide protection. |
 | SWE-agent | Task prompt or harness-level instruction file | Include the bridge in the task prompt or harness instructions and mount the skill folder into the workspace. |
-| Augment Code | Rules or guidelines | Add a rule/guideline with the bridge and keep the full skill in `.agents/skills/`. |
-| Trae | Project rules or `.trae/skills/supply-chain-guard/` if available | Prefer a project rule pointing at `.agents/skills/supply-chain-guard/SKILL.md`. If the client supports skills, copy the folder to its skills directory. |
-| Mistral Vibe | `.vibe/skills/supply-chain-guard/SKILL.md`, `~/.vibe/skills/supply-chain-guard/SKILL.md`, or `AGENTS.md` | Copy the skill folder to Vibe's project or global skills directory and keep a portable bridge for repository context. |
+| Augment Code | `.augment/rules/` or `AGENTS.md` | Add a rule or guideline with the bridge and keep the full skill in `.agents/skills/`. |
+| Trae | `.agents/skills/supply-chain-guard/` or `.trae/skills/supply-chain-guard/` | Prefer the portable folder. If the client supports a native skills directory, copy the folder there too. |
+| Mistral Vibe | `.agents/skills/supply-chain-guard/`, `.vibe/skills/supply-chain-guard/SKILL.md`, or `~/.vibe/skills/supply-chain-guard/SKILL.md` | Prefer the portable folder. Vibe also loads `.vibe/skills/` and `~/.vibe/skills/`. Keep an `AGENTS.md` bridge. |
 
 ## Sources And References
 
@@ -231,29 +233,37 @@ Skill format and repository instructions:
 Agent and editor setup references:
 
 - [Devin Docs: Skills](https://docs.devin.ai/product-guides/skills)
+- [Grok Build Docs: Skills, Plugins, and Marketplaces](https://docs.x.ai/build/features/skills-plugins-marketplaces)
 - [Claude Code Docs: Skills](https://code.claude.com/docs/en/skills)
+- [Codex Docs: Build skills](https://learn.chatgpt.com/codex/build-skills)
 - [Goose Docs: Using skills](https://goose-docs.ai/docs/guides/context-engineering/using-skills/)
 - [GitHub Docs: Repository custom instructions for Copilot](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions)
+- [GitHub Docs: About agent skills](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills)
+- [Cursor Docs: Skills](https://cursor.com/docs/skills)
 - [Cursor Docs: Rules](https://cursor.com/docs/rules)
-- [Windsurf Docs: Rules and AGENTS.md](https://docs.windsurf.com/windsurf/cascade/memories)
+- [Devin Desktop Docs: Memories and Rules](https://docs.devin.ai/desktop/cascade/memories)
 - [Gemini CLI Docs: GEMINI.md context files](https://google-gemini.github.io/gemini-cli/docs/cli/gemini-md.html)
 - [Replit Docs: custom templates and skills](https://docs.replit.com/teams/custom-templates)
 - [JetBrains Docs: Junie guidelines](https://www.jetbrains.com/help/ai-assistant/junie-agent.html)
-- [OpenHands Docs: repository skills](https://docs.openhands.dev/overview/skills/repo)
+- [Junie Docs: Agent skills](https://junie.jetbrains.com/docs/agent-skills.html)
+- [OpenHands Docs: Skills](https://docs.openhands.dev/overview/skills)
 - [Cline Docs: Cline Rules](https://docs.cline.bot/customization/cline-rules)
 - [Continue Docs: Rules](https://docs.continue.dev/customize/rules)
 - [Kilo Code Docs: rules and AGENTS.md migration](https://kilo.ai/docs/getting-started/migrating)
 - [Aider Docs: conventions files](https://aider.chat/docs/usage/conventions.html)
 - [Qodo Docs: Agent TOML files](https://docs.qodo.ai/qodo-ide/agent/workflows/agent-toml-file)
 - [Tabnine Docs: Custom commands](https://docs.tabnine.com/main/getting-started/tabnine-cli/features/commands)
-- [Sourcegraph Amp Manual: AGENTS.md](https://ampcode.com/manual)
+- [Sourcegraph Amp Manual](https://ampcode.com/manual)
 - [Factory Docs: Skills](https://docs.factory.ai/cli/configuration/skills)
 - [Factory Docs: AGENTS.md](https://docs.factory.ai/cli/configuration/agents-md)
-- [Mistral Docs: Vibe Agents and Skills](https://docs.mistral.ai/mistral-vibe/agents-skills)
-- [Google Jules Docs: AGENTS.md support](https://jules.google/docs/changelog/2025-06-20/)
+- [OpenCode Docs: Agent Skills](https://opencode.ai/docs/skills/)
+- [Kiro Docs: Agent Skills](https://kiro.dev/docs/skills/)
+- [Mistral Docs: Vibe CLI Skills](https://docs.mistral.ai/vibe/code/cli/skills)
+- [Google Jules Docs: Getting started](https://jules.google/docs/)
 - [Augment Docs: Rules and Guidelines](https://docs.augmentcode.com/setup-augment/guidelines)
-- [Zed Docs: Agent Panel](https://zed.dev/docs/ai/agent-panel)
-- [Warp Docs: Using Agents](https://docs.warp.dev/agent-platform/local-agents/interacting-with-agents/)
+- [Zed Docs: Skills](https://zed.dev/docs/ai/skills)
+- [Warp Docs: Skills for agents](https://docs.warp.dev/agents/capabilities/skills/)
+- [Roo Code Docs: Extension shutdown](https://roocodeinc.github.io/Roo-Code/)
 
 Incident case studies:
 
