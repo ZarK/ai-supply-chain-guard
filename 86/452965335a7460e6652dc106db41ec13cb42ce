@@ -1,0 +1,14 @@
+CHANGELOG.md
+  h_13eab01d19dfa9 7-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "86452965335a7460e6652dc106db41ec13cb42ce",
+  "prompts": {},
+  "humans": {
+    "h_13eab01d19dfa9": {
+      "author": "Tjalve Aarflot <tjalve.github@proton.me>"
+    }
+  }
+}
