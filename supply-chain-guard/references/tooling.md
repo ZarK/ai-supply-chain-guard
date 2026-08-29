@@ -25,11 +25,18 @@ Treat scanner output as input to review, not an automatic fix instruction. Do no
 
 ## First-party trust and provenance checks
 
-- npm: use `npm audit signatures` where supported to verify registry signatures and provenance attestations for installed packages.
-- PyPI: prefer Trusted Publishers and digital attestations for publishing; verify expected publisher identity where tooling supports it.
-- JSR/Deno: prefer provenance-capable publishing and `deno audit` where applicable.
+Query provenance before install when the registry publishes it. After install, use the verify command on the installed tree.
+
+- npm: before install, `npm view <pkg>@<version> dist.integrity dist.tarball --json` and inspect attestations when present. After install, `npm audit signatures`.
+- PyPI: before install, read the JSON API `files[]` entry for the selected wheel or sdist (`upload_time_iso_8601`, `digests`, provenance when present). Prefer Trusted Publishers and digital attestations for publishing.
+- crates.io / Cargo: compare the lockfile checksum with the registry record for that exact version.
+- Go: rely on the public checksum database for public modules. Do not set `GONOSUMDB` for them.
+- Maven / Gradle: fetch published checksums or verification metadata for the exact coordinates before resolving a new version.
 - GitHub artifacts: verify consumed attestations with `gh attestation verify` and inspect signer repository/workflow, ref, environment, and artifact digest against policy.
+- JSR/Deno: prefer provenance-capable publishing and `deno audit` where applicable.
 - Composer: use Composer's security blocking / policy configuration where available, in addition to `composer audit`.
+
+"Expected" identity is the repository and workflow in the registry metadata, cross-checked against the project's documented source. Absent provenance raises review depth. Downgraded provenance blocks the change until the user approves it.
 
 Valid provenance is not proof that the code is benign. It only tells you where and how the artifact claims to have been built.
 

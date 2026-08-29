@@ -34,10 +34,15 @@ Use this reference when asked to harden a repository, CI pipeline, release workf
 - Set default workflow token permissions to read-only.
 - Grant write permissions per job only where required.
 - Use environment protection rules for production deploys and package publishing.
-- Avoid `pull_request_target` or equivalent privileged fork events for workflows that check out, install, build, cache, or execute untrusted code. If unavoidable, do not check out the pull request head/merge ref, do not run package-manager commands, do not restore shared caches, and grant no write token or OIDC permission.
+- Avoid privileged triggers that run in a base-repository context with secrets: `pull_request_target`, `workflow_run`, `issue_comment`, `pull_request_review`, and untrusted `repository_dispatch`. If a privileged trigger is unavoidable, do not check out the pull request head/merge ref, do not run package-manager commands, do not restore shared caches, and grant no write token or OIDC permission.
+- For `workflow_run`, treat artifacts and metadata from the triggering run as untrusted data. Do not execute them or interpolate them into scripts.
 - Pin third-party actions and reusable workflows to full-length commit SHAs. A tag or branch is mutable and should be reviewed like a floating dependency version.
+- SHA pinning is not transitive. A SHA-pinned composite action or reusable workflow can still contain `uses: other/action@v2` or download assets at runtime. When you approve a pinned action, inspect its internal `uses:` refs and runtime downloads at that commit. Prefer actions whose internals are also pinned, or fork them.
 - When pinning GitHub Actions by SHA, keep a same-line comment with the reviewed upstream version tag, for example `owner/action@<full-sha> # v1.2.3`, so humans and update tools can understand the intended release while the executable ref stays immutable.
 - Treat new or modified inline `run` blocks as executable dependency code. Review them for network downloads, shell execution, secret access, OIDC/write permissions, artifact/cache writes, publish commands, and privilege-boundary crossings before they run in trusted jobs.
+- Never interpolate untrusted `github.event.*`, `github.head_ref`, or commit/issue/PR text into a `run:` script with `${{ }}`. Pass the value through `env:` and quote it. Treat a privileged workflow that interpolates event data into a script as a code-execution finding.
+- Do not insert untrusted issue, pull-request, or commit text into an AI-agent prompt in CI while privileged tools or secrets are available.
+- Use `actions/checkout` with `persist-credentials: false` in any job that installs dependencies, builds, or runs third-party code. Re-authenticate only where push access is required.
 - Avoid persistent self-hosted runners for untrusted code. Use ephemeral runners or isolated job environments.
 - Clear package-manager caches after confirmed compromise and avoid sharing writable caches between trusted and untrusted jobs.
 
@@ -76,8 +81,11 @@ For every dependency or CI change, answer:
 - Does this change alter the dependency graph, lockfile, install behavior, registry, or executable lifecycle hooks?
 - Does any new code run or get read during install, build, import, bootstrap, test, CI, release, deployment, editor startup, or agent/tool startup?
 - Does the workflow expose secrets or write tokens to code from forks or untrusted branches?
+- Does any `run:` block interpolate untrusted `github.event.*` or `head_ref` through `${{ }}` instead of `env:`?
+- Does a privileged trigger (`pull_request_target`, `workflow_run`, `issue_comment`, `pull_request_review`, `repository_dispatch`) check out, install, or run untrusted code?
 - Can untrusted jobs write caches or artifacts consumed by privileged jobs?
-- Are third-party actions and reusable workflows pinned to immutable refs?
+- Are third-party actions and reusable workflows pinned to immutable refs, and were their internal `uses:` refs inspected at that commit?
+- Does `actions/checkout` set `persist-credentials: false` in jobs that install or run third-party code?
 - Is provenance valid for the expected workflow/ref/environment, and is the release path itself trustworthy?
 - Are versions pinned and old enough under the package-age policy?
 - Can the same result be achieved with an existing dependency or standard library?

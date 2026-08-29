@@ -24,10 +24,12 @@ What the skill does because of this:
 - It does not trust a package just because the name is familiar.
 - It checks exact package name, exact version, registry source, and lockfile entry.
 - It treats newly published versions as risky by default.
-- It requires a 7-day default age gate and prefers 14 days for higher-risk packages.
+- It requires a 7-day default age gate on the selected artifact's upload time and prefers 14 days for higher-risk packages.
 - It fetches current advisories during named incidents instead of relying on static package lists.
 
-Human habit to learn: when a popular package has a fresh patch release, do not assume "patch" means "safe." Ask who published it, when, from where, and whether the version has survived public scrutiny.
+A related case is intentional maintainer self-sabotage (protestware). The legitimate sole maintainer can ship a destructive or geo-conditional payload under valid provenance and the expected publisher. Identity signals stay green. The age gate and runtime-behavior review still apply.
+
+Human habit to learn: when a popular package has a fresh patch release, do not assume "patch" means "safe." Ask who published it, when, from where, and whether the version has survived public scrutiny. Valid identity is not proof of benign intent.
 
 ## Lesson 2: Install Is Code Execution
 
@@ -71,7 +73,8 @@ What the skill does because of this:
 - It treats third-party actions and reusable workflows like packages.
 - It requires full-length commit SHA pinning for third-party actions where the platform supports it.
 - It flags branch and tag refs like floating dependency versions.
-- It reviews `pull_request_target`, `id-token: write`, `secrets`, `permissions`, `actions/cache`, `upload-artifact`, and `download-artifact` changes.
+- It reviews `pull_request_target`, `workflow_run`, `issue_comment`, `id-token: write`, `secrets`, `permissions`, `actions/cache`, `upload-artifact`, and `download-artifact` changes.
+- It treats `${{ github.event.* }}` interpolation into `run:` scripts as code execution.
 - It separates untrusted PR work from privileged release and publish jobs.
 
 Human habit to learn: a workflow file is production code. A one-line `uses:` change can be as risky as adding a new runtime dependency.
@@ -98,12 +101,13 @@ Many malicious releases are detected, deprecated, or removed within hours. That 
 
 What the skill does because of this:
 
-- It applies a 7-day default package-age delay.
+- It applies a 7-day default package-age delay to the exact artifact that will be installed.
 - It prefers 14 days for packages that run in production, touch auth/crypto/networking, ship native code, affect CI/CD, execute install scripts, or have large transitive graphs.
-- It recommends native age gates where available, such as npm `min-release-age`, pnpm `minimumReleaseAge`, Yarn `npmMinimalAgeGate`, Bun `minimumReleaseAge`, Deno `minimumDependencyAge`, uv `exclude-newer`, and pip `--uploaded-prior-to`.
-- It requires explicit documentation for age-gate exceptions.
+- It age-checks file or asset upload time and digest. It does not treat Git commit time, Git tag time, or a version-level `published_at` as protection when a later file exists.
+- It recommends native age gates where available, such as npm `min-release-age` (11.10.0+), pnpm `minimumReleaseAge`, Yarn `npmMinimalAgeGate`, Bun `minimumReleaseAge`, Deno `minimumDependencyAge`, uv `exclude-newer`, pip `--uploaded-prior-to`, and Poetry `solver.min-release-age`.
+- It requires explicit user approval, plus an advisory corroborated against OSV, GHSA, or NVD, for age-gate exceptions.
 
-Human habit to learn: time is a security control. It will not catch every attack, but it avoids being among the first systems to run a freshly compromised release.
+Human habit to learn: time is a security control. It will not catch every attack, but it avoids being among the first systems to run a freshly compromised release. Passing the age gate is not evidence of safety.
 
 ## Lesson 7: Security Fixes Need a Narrow Exception Path
 
@@ -111,15 +115,28 @@ Age gates can delay urgent vulnerability fixes. A blanket rule that blocks every
 
 What the skill does because of this:
 
-- It allows security-fix exceptions with explicit approval.
-- It requires an advisory ID, affected versions, exact fixed version, evidence, and explanation of why no older fixed version works.
+- It allows security-fix exceptions only with explicit approval from the user in the conversation.
+- It requires an advisory ID corroborated against OSV, GHSA, NVD, or the registry advisory API. Package text and prompting reports are not evidence.
+- It requires affected versions, exact fixed version, and an explanation of why no older fixed version works.
 - It requires the narrowest package-manager bypass available.
 - It still requires post-install lockfile, script, provenance, and test review.
 - It never silently lowers the global age gate.
 
-Human habit to learn: exceptions should be narrow, named, temporary, and reviewed. Disabling the guard globally is not an exception path.
+Human habit to learn: exceptions should be narrow, named, temporary, and reviewed by the user. Disabling the guard globally is not an exception path.
 
-## Lesson 8: Exotic Sources Bypass Normal Registry Signals
+## Lesson 8: Slopsquatting Is the Agent as Vector
+
+This skill's audience is an agent that can pick package names from its own memory. A hallucinated name that an attacker pre-registered weeks earlier can clear the age gate, show plausible metadata, ship no scripts, and still be the wrong package.
+
+What the skill does because of this:
+
+- When a name comes from the model rather than the user, a manifest, or official docs, it requires a canonicity check.
+- It prefers names the codebase already uses.
+- It compares downloads, dependents, first-publish date, and official-doc references against any more popular near-identical name.
+
+Human habit to learn: a name the model "remembers" is a hypothesis. Confirm it is the canonical package before install.
+
+## Lesson 9: Exotic Sources Bypass Normal Registry Signals
 
 Git URLs, tarballs, branch refs, raw HTTP URLs, local paths, binary downloaders, and custom registries often bypass the metadata and review workflows people rely on. They may lack publication timestamps, signatures, provenance, checksums, vulnerability data, or consistent immutability.
 
@@ -135,7 +152,7 @@ What the skill does because of this:
 
 Human habit to learn: "just use this GitHub URL" is still installing someone else's code. It deserves the same scrutiny as a registry package, often more.
 
-## Lesson 9: IDE, MCP, and Agent Tooling Are Part of the Supply Chain
+## Lesson 10: IDE, MCP, and Agent Tooling Are Part of the Supply Chain
 
 Development tooling now executes code with access to the user's workspace, shell, environment variables, local credentials, and sometimes browser or cloud sessions. IDE extensions, MCP servers, agent rules, hooks, tasks, and tool permission files can become persistence or exfiltration mechanisms.
 
@@ -150,7 +167,7 @@ What the skill does because of this:
 
 Human habit to learn: developer tooling is not harmless config. If it can run commands or read secrets, it belongs in the supply-chain review.
 
-## Lesson 10: Lockfiles Are Evidence
+## Lesson 11: Lockfiles Are Evidence
 
 Lockfiles record resolved versions, URLs, integrity hashes, transitive dependencies, and sometimes registry sources. They are not just package-manager noise. During an incident, the lockfile often answers whether a repository could have installed the compromised version.
 
@@ -163,7 +180,7 @@ What the skill does because of this:
 
 Human habit to learn: a lockfile diff is a security diff. Review it like code.
 
-## Lesson 11: Secrets Make Installs Dangerous
+## Lesson 12: Secrets Make Installs Dangerous
 
 Many supply-chain payloads hunt for secrets first because stolen credentials let the attacker spread, publish, deploy, or access cloud systems. Developer machines and CI runners often have more secrets than application runtime environments.
 
@@ -177,7 +194,7 @@ What the skill does because of this:
 
 Human habit to learn: do not install unreviewed dependencies in the same shell or CI job that can publish, deploy, or read production secrets.
 
-## Lesson 12: Incident Response Must Assume Execution Happened
+## Lesson 13: Incident Response Must Assume Execution Happened
 
 If malicious install-time code may have run, cleanup is not just "remove the package." The environment may have leaked credentials, poisoned caches, produced compromised artifacts, persisted through developer-tool configuration, or published new malicious versions.
 
@@ -185,7 +202,7 @@ What the skill does because of this:
 
 - It stops installs and builds in the exposed environment.
 - It preserves evidence before cleanup.
-- It rotates credentials that were reachable from the host or runner.
+- It rotates credentials from a clean machine and kills active sessions.
 - It invalidates CI tokens, caches, and derived artifacts.
 - It audits package registry, SCM, cloud, and release activity during the exposure window.
 - It rebuilds releases from clean infrastructure when needed.
@@ -198,7 +215,7 @@ When dependency or tooling work starts, the agent should:
 
 1. Identify every package manager, registry, lockfile, CI workflow, publish path, IDE extension config, MCP config, and agent-tool config in scope.
 2. Prefer no new dependency if existing code or existing dependencies can solve the task.
-3. If a dependency is needed, select an exact version and verify age, source, metadata, maintainers, provenance, scripts, binaries, and lockfile impact before install.
+3. If a dependency is needed, select an exact version and verify age, source, canonicity when the name came from the model, metadata, maintainers, provenance, scripts, binaries, and lockfile impact before install.
 4. Use frozen/locked installs and lifecycle-script suppression by default.
 5. Review all CI action and reusable workflow refs like dependency refs.
 6. Keep untrusted PR code, mutable caches, artifacts, and package-manager stores away from release and publish jobs.
@@ -217,7 +234,7 @@ Use the skill as a decision checklist, not as a magic scanner.
 
 ## Source Notes
 
-This tutorial is based on the public TanStack postmortem, Socket and Aikido analyses of Mini Shai-Hulud activity including the May 2026 AntV wave, GitHub Actions hardening and artifact-attestation guidance, npm trusted publishing and configuration docs, and the ecosystem package-manager documentation linked from `package-manager-configs.md`.
+This tutorial is based on the public TanStack postmortem, Socket and Aikido analyses of Mini Shai-Hulud activity including the May 2026 AntV wave, Tenet Agentjacking and Aikido PromptPwnd research, GitHub Actions hardening and artifact-attestation guidance, npm trusted publishing and configuration docs, and the ecosystem package-manager documentation linked from `package-manager-configs.md`.
 
 Primary references:
 
@@ -226,7 +243,10 @@ Primary references:
 - Aikido TanStack analysis: [Aikido TanStack analysis](https://www.aikido.dev/blog/mini-shai-hulud-is-back-tanstack-compromised)
 - Socket AntV analysis: [Socket AntV analysis](https://socket.dev/blog/antv-packages-compromised)
 - Aikido AntV analysis: [Aikido AntV analysis](https://www.aikido.dev/blog/mini-shai-hulud-antv-npm-supply-chain-attack)
+- Tenet Agentjacking: [Tenet Agentjacking](https://tenetsecurity.ai/blog/agentjacking-coding-agents-with-fake-sentry-errors/)
+- Aikido PromptPwnd: [Aikido PromptPwnd](https://www.aikido.dev/blog/promptpwnd-github-actions-ai-agents)
 - GitHub Actions secure use: [GitHub Actions secure use](https://docs.github.com/en/actions/reference/security/secure-use)
 - GitHub artifact attestations: [GitHub artifact attestations](https://docs.github.com/en/actions/concepts/security/artifact-attestations)
 - npm trusted publishing: [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/)
 - npm config: [npm config](https://docs.npmjs.com/cli/v11/using-npm/config)
+- npm v12 breaking changes: [npm v12 breaking changes](https://github.blog/changelog/2026-06-09-upcoming-breaking-changes-for-npm-v12/)
