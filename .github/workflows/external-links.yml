@@ -27,6 +27,7 @@ jobs:
             --max-retries 2
             --timeout 20
             --exclude 'https://socket\.dev/.*'
+            --exclude 'https://tanstack\.com/blog/npm-supply-chain-compromise-postmortem'
             --verbose
             --no-progress
             "**/*.md"
