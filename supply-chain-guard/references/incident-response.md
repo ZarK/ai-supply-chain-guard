@@ -10,14 +10,13 @@ Use this reference when a repository may have installed, built, published, or ex
 4. Compare exact package names, versions, tarball URLs, hashes, and advisory timestamps against current advisories from OSV, GHSA, NVD, registry advisory APIs, or the vendor security page. Corroborate compromised versions from two independent sources in that tier before any version change.
 5. Assume any secret available to install/build/import/bootstrap code, CI actions, MCP servers, IDE extensions, agent/editor tooling, or release jobs may be compromised until proven otherwise.
 6. Do not assume a package or artifact is safe because it has valid provenance, signatures, or trusted-publishing metadata. Verify the expected workflow/ref/environment and inspect the release path.
-7. Treat synchronized backups, dotfile repositories, migration archives, and configuration exports as potentially poisoned when the compromised host could write to them.
 
-## Untrusted command or download execution
+## Alert-sourced command execution
 
-If a package-manager, shell, download, installer, one-shot CLI, profiling, or diagnostic command came from an assistant, search result, advertisement, forum, chat, alert, log, stack trace, telemetry event, support ticket, or other external source and may have run:
+If a package-manager, shell, download, one-shot CLI, profiling, or diagnostic command came from an alert, log, stack trace, telemetry event, support ticket, or other external report and may have run:
 
 1. Treat the host or runner as potentially compromised; stop further agent tasks, installs, builds, tests, and releases there.
-2. Preserve the original event, source and ingest path, timestamp, exact text, URL, redirect chain, command, routing history, agent transcript or task log, process history, and command output. Do not revisit the site or rerun the command to confirm behavior from the exposed host.
+2. Preserve the original event, source and ingest path, timestamp, exact text and command, routing history, agent transcript or task log, process history, and command output. Do not rerun the command to confirm behavior.
 3. Identify every artifact or package name, exact version, source, resolved URL/ref, hash, cache entry, generated file, and process introduced or touched by the command.
 4. Inventory the host or runner identity, filesystem mounts, environment variables, credential files, metadata services, network permissions, and publish/deploy authority reachable during execution.
 5. Enumerate outbound domains, IPs, URLs, API paths, uploaded content, and downloaded artifacts from DNS, proxy, endpoint, shell, CI, and application telemetry; compare them with current primary reports and advisories rather than a stale embedded IOC list.
@@ -37,7 +36,6 @@ The final incident note must include the report source, ingest path, timestamp, 
 - Rebuild affected self-hosted runner images, dev containers, workstations, or CI runner templates if install-time code may have executed with sensitive access. For hosted runners, discard artifacts/caches and rerun from clean jobs after controls are fixed.
 - Invalidate package-manager caches, CI caches, build caches, restored tool directories, and derived artifacts that may contain attacker-controlled files.
 - Check for malicious releases, tags, package versions, workflow edits, branch protection changes, deploy keys, webhooks, OAuth apps, personal access tokens, machine users, Git hooks, shell startup files, scheduled jobs, system services, agent/editor instruction or config changes, and private repositories made public during the exposure window.
-- Quarantine synchronized backups and restored configuration. Start agents and editors in a safe mode that excludes restored control files. Before the first normal launch on a rebuilt host, use an external process to compare every skill, instruction, rule, hook, task, permission, MCP/tool definition, startup file, and referenced script or asset with a known-good manifest, version-controlled baseline, pinned digest, or independently obtained clean copy. Restore only known-good files. Recreate files whose origin or integrity is unknown.
 - Enumerate other repositories and teams in the same organization that depend on the compromised versions. Use the dependency graph, organization-wide alerts, and internal registry pull logs.
 
 ## Investigation checklist

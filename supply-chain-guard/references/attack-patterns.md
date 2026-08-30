@@ -57,30 +57,17 @@ Review process trees, filesystem reads, environment enumeration, metadata calls,
 
 Resolve the exact destination before installation: repository-local, workspace, user, profile, machine, container/image, or global agent/IDE path. Check path precedence, discovery rules, symlinks/junctions, ignored and hidden files, alternate profiles, remote-development hosts, generated config, and whether the installer writes outside the approved destination. A safe-looking project copy does not rule out a higher-precedence user or global foothold.
 
-Treat agent skills, instructions, rules, hooks, permissions, MCP definitions, and editor config as executable influence surfaces, even when they contain only prose. A backup copy is not safe merely because it predates a rebuild. Diff names, descriptions, selection triggers, prerequisites, examples, permission requests, tool calls, external URLs, references, bundled scripts/templates/assets, and install/update steps. Look for discovery or selection manipulation, unrelated trigger phrases, compliance/audit/telemetry framing used to justify secret access, instructions to upload or synchronize local data, dangerous approvals hidden in setup, mutable remote instructions, hidden Unicode, and mismatch between declared purpose and requested behavior. Semantic or LLM-assisted review can supplement, but never replace, human diff review, immutable pinning, isolation, and least-privilege permissions.
+Treat skill and instruction prose as operational content. Diff names, descriptions, selection triggers, prerequisites, examples, permission requests, tool calls, external URLs, references, bundled scripts/templates/assets, and install/update steps. Look for discovery or selection manipulation, unrelated trigger phrases, compliance/audit/telemetry framing used to justify secret access, instructions to upload or synchronize local data, dangerous approvals hidden in setup, mutable remote instructions, hidden Unicode, and mismatch between declared purpose and requested behavior. Semantic or LLM-assisted review can supplement, but never replace, human diff review, immutable pinning, isolation, and least-privilege permissions.
 
 After removal or rollback, inspect both the intended install path and adjacent user/global configuration for hooks, tasks, settings, permissions, MCP entries, agent instructions, shell startup changes, or other persistence left behind.
-
-After suspected host compromise, include backups, synchronized folders, dotfile repositories, migration archives, and configuration exports in the exposure set. Before the first agent or editor launch on a clean host, quarantine and review all skills, rules, instructions, hooks, tasks, permissions, MCP/tool definitions, startup files, and referenced assets. Resolve project, workspace, user, profile, machine, container, and global discovery paths. Compare each file with a known-good version or recreate it when origin and integrity are unknown. Do not let an agent load the files while using that same agent to review them.
 
 ## 2025–2026 campaign-shape checks
 
 These are generalized behaviors observed across recent campaigns, not a package-name or IOC list. For a live incident, fetch current primary reports and advisories, then compare exact versions, artifacts, hashes, and destinations in the affected environment.
 
-### Copycat download sites and installer links
+### Assistant-suggested downloads and poisoned agent files
 
-Treat download and install links from assistants, search results, advertisements, forums, chats, issues, READMEs, and support messages as untrusted leads. Review for:
-
-- A registrable domain, organization, publisher, repository, or store identity that differs from the canonical publisher.
-- Homoglyphs, punycode, misleading subdomains, URL shorteners, affiliate or tracking redirects, newly registered domains, and copied product branding.
-- Direct links that bypass the canonical product or release page and obscure the selected version, platform, filename, upload time, or digest.
-- A terminal command that downloads and executes content in one step, including pipe-to-shell, encoded commands, temporary-file execution, permission changes, quarantine removal, or security-control changes.
-- Installers whose code-signing identity, checksum, filename, version metadata, or network destination disagrees with the canonical release record.
-- Requests for administrator access, accessibility control, browser access, password-manager access, shell-profile changes, agent-tool access, or security exclusions that the product's verified function does not require.
-
-Do not validate a supplied site by asking that same site whether it is official. Find the canonical publisher through an independent root, then compare the final destination and exact artifact. Preserve the URL chain, page capture, downloaded file, digest, signature details, and timestamps if execution or exposure may have occurred.
-
-A different delivery host is not automatically malicious. Verify that the canonical release, store, or registry record explicitly delegates delivery to that host. Treat an unexpected or undelegated host as a risk. Treat raw file hosts and generic artifact hosts as high risk unless a canonical source delegates to them. Never execute mutable raw content directly. If raw content is necessary, pin an immutable revision or digest, inspect the content, and separate download from execution.
+Treat a software download URL, install command, or terminal one-liner from an assistant as an unverified dependency lead. Check for copied branding, new or lookalike domains, unexpected redirects, raw executable content, artifact identity or digest mismatches, and combined download-and-execute behavior. Confirm publisher identity independently. Treat skills, instructions, hooks, MCP definitions, permissions, and agent or editor configuration restored from backups or synchronized storage as persistence-capable influence surfaces. After suspected compromise, quarantine and review them before the target agent loads them. Compare them with known-good copies and inspect referenced scripts and assets.
 
 ### Fake observability and alert command injection
 

@@ -105,7 +105,7 @@ What the skill does because of this:
 - It prefers 14 days for packages that run in production, touch auth/crypto/networking, ship native code, affect CI/CD, execute install scripts, or have large transitive graphs.
 - It age-checks file or asset upload time and digest. It does not treat Git commit time, Git tag time, or a version-level `published_at` as protection when a later file exists.
 - It recommends native age gates where available, such as npm `min-release-age` (11.10.0+), pnpm `minimumReleaseAge`, Yarn `npmMinimalAgeGate`, Bun `minimumReleaseAge`, Deno `minimumDependencyAge`, uv `exclude-newer`, pip `--uploaded-prior-to`, and Poetry `solver.min-release-age`.
-- It requires an authenticated user decision or an immutable, reviewed organization or repository policy, plus an advisory corroborated against OSV, GHSA, or NVD, for age-gate exceptions.
+- It requires explicit user approval, plus an advisory corroborated against OSV, GHSA, or NVD, for age-gate exceptions.
 
 Human habit to learn: time is a security control. It will not catch every attack, but it avoids being among the first systems to run a freshly compromised release. Passing the age gate is not evidence of safety.
 
@@ -115,7 +115,7 @@ Age gates can delay urgent vulnerability fixes. A blanket rule that blocks every
 
 What the skill does because of this:
 
-- It allows security-fix exceptions only through an authenticated user decision or an immutable, reviewed organization or repository policy established outside untrusted task content.
+- It allows security-fix exceptions only with explicit approval from the user in the conversation.
 - It requires an advisory ID corroborated against OSV, GHSA, NVD, or the registry advisory API. Package text and prompting reports are not evidence.
 - It requires affected versions, exact fixed version, and an explanation of why no older fixed version works.
 - It requires the narrowest package-manager bypass available.
