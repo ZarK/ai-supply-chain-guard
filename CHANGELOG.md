@@ -4,6 +4,13 @@ This project uses Git tags and GitHub releases as the source of truth for releas
 
 ## Unreleased
 
+## v1.5.0 - 2026-08-30
+
+- Check the source, publisher, domain, exact artifact, age, and integrity before recommending a software download or install command. Require source approval before showing a runnable command in chat.
+- Treat restored agent skills, hooks, MCP definitions, permissions, and configuration as persistence surfaces. Review them before they load.
+- Update the pinned checkout action to v7.0.1 and setup-node action to v7.0.0. Exclude a source that blocks CI clients from the external-link check.
+- Pass manual release tags through an environment variable before validation. Do not persist checkout credentials in release jobs.
+
 ## v1.4.1 - 2026-08-13
 
 - Refresh the agentic install matrix. Document Grok Bot and Grok Build. Update tool paths against current vendor docs.
