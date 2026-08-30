@@ -4,8 +4,6 @@ This project uses Git tags and GitHub releases as the source of truth for releas
 
 ## Unreleased
 
-- Scale download and install verification by action risk. Add trust anchors, assurance profiles, delegated-host checks, unattended blocked results, deterministic enforcement guidance, and recovery scenarios for poisoned agent-control files.
-
 ## v1.4.1 - 2026-08-13
 
 - Refresh the agentic install matrix. Document Grok Bot and Grok Build. Update tool paths against current vendor docs.
