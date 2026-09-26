@@ -4,7 +4,7 @@ Use this reference when asked to harden a repository, CI pipeline, release workf
 
 ## Repository controls
 
-- Require pull requests before merge and protect default and release branches.
+- Require pull requests before merge and protect default and release branches. Review every repository write path, including email-based creation and patch submission, for required reviews, CI triggers, and network restrictions. Verify coverage against current platform documentation and settings; sender authentication does not establish credential ownership, and HTTP/SSH restrictions may not cover other paths.
 - Require status checks that include tests, dependency review, secret scanning or equivalent, and relevant code scanning.
 - Require review from code owners for dependency manifests, lockfiles, CI workflows, release scripts, package-manager config, and infrastructure credentials.
 - Require signed commits or verified branch rules where practical.
@@ -23,7 +23,7 @@ Use this reference when asked to harden a repository, CI pipeline, release workf
 ## Secret controls
 
 - Enable secret scanning and push protection where available.
-- Add custom secret patterns for internal tokens, private registries, package publish tokens, deployment keys, and cloud account formats.
+- Add custom secret patterns for internal tokens, private registries, package publish tokens, deployment keys, cloud account formats, and tokens embedded in addresses. Verify scanner coverage for current and legacy formats and self-hosted domains; record unknown coverage.
 - Do not expose secrets to untrusted pull request workflows.
 - Prefer short-lived OIDC credentials over long-lived cloud keys, registry tokens, and deploy keys.
 - Keep publish tokens separate from install tokens and give them the smallest possible scope.

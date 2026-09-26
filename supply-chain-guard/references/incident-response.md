@@ -1,14 +1,14 @@
 # Incident Response
 
-Use this reference when a repository may have installed, built, published, or executed a compromised dependency or project generator.
+Use this reference for suspected dependency compromise, exposed credentials, or suspicious changes to live agent/tool configuration or metadata.
 
 ## First response
 
-1. Stop dependency installs, builds, release jobs, and publish jobs in the affected environment.
-2. Preserve evidence before cleanup: manifests, lockfiles, package-manager caches if relevant, CI logs, shell history snippets, suspicious package tarballs, process listings, network indicators, and timestamps.
-3. Identify the exposure window: first possible install time, CI jobs that ran during that window, developer machines that ran installs, and releases published afterward.
-4. Compare exact package names, versions, tarball URLs, hashes, and advisory timestamps against current advisories from OSV, GHSA, NVD, registry advisory APIs, or the vendor security page. Corroborate compromised versions from two independent sources in that tier before any version change.
-5. Assume any secret available to install/build/import/bootstrap code, CI actions, MCP servers, IDE extensions, agent/editor tooling, or release jobs may be compromised until proven otherwise.
+1. Stop affected tool use and dependent actions, dependency installs, builds, release jobs, and publish jobs in the affected environment.
+2. Preserve evidence before cleanup: manifests, lockfiles, package-manager caches if relevant, CI logs, shell history snippets, suspicious package tarballs, process listings, network indicators, configuration and tool metadata, and timestamps.
+3. Identify the exposure window: first possible install, credential publication, or configuration/metadata change, affected machines, repository writes and CI jobs during that window, and releases published afterward.
+4. If a dependency is implicated, compare exact package names, versions, tarball URLs, hashes, and advisory timestamps against current advisories from OSV, GHSA, NVD, registry advisory APIs, or the vendor security page. Corroborate compromised versions from two independent sources in that tier before any version change.
+5. Assume secrets reachable through affected execution or exposed credentials may be compromised until proven otherwise.
 6. Do not assume a package or artifact is safe because it has valid provenance, signatures, or trusted-publishing metadata. Verify the expected workflow/ref/environment and inspect the release path.
 
 ## Alert-sourced command execution
@@ -30,6 +30,7 @@ The final incident note must include the report source, ingest path, timestamp, 
 - Remove or pin away from compromised versions and regenerate lockfiles only after deciding the safe target versions.
 - Disable or pause publish workflows, package release automation, and deployment jobs until credentials are rotated.
 - Rotate credentials from a device that is not in the exposure set, or from a reimaged host. Do not rotate from a workstation or runner that may still be compromised. If the host ran a malicious postinstall, rotating there can hand the attacker the replacements.
+- Reset or revoke exposed credentials through the platform's supported controls, including tokens embedded in published addresses. Removing the address alone does not revoke access. Review repository writes, CI configuration and runs, and artifacts; scope further rotation to reachable authority.
 - On SCM, registry, cloud, and CI consoles, use "sign out everywhere" or revoke active sessions after rotation. Treat reachable browser sessions, cookies, and password-manager exports as compromised and rotate the underlying accounts.
 - Revoke or rotate registry tokens, Git hosting tokens, cloud credentials, SSH deploy keys, CI secrets, OIDC trust relationships, kubeconfigs, Vault tokens, package signing keys, AI provider keys, and deployment credentials that were available to affected jobs or machines.
 - Invalidate persistent self-hosted runners that executed untrusted installs. Rebuild them from a clean image.

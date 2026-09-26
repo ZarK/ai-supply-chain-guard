@@ -51,6 +51,8 @@ Canonical surface names from `SKILL.md` map to these sections:
 
 Model exposure from what the process could reach, not only what it demonstrably stole. Inventory environment variables, dotfiles, package-manager and SCM auth, SSH material, cloud credentials and metadata services, workload identity/OIDC, cluster credentials, signing keys, password-manager or wallet exports, browser sessions, mounted secrets, CI variables, registry/release/deploy authority, and installed agent CLIs with their sessions, permissions, and MCP connections.
 
+Treat contact or intake addresses that embed authentication tokens as credentials; distinguish them from public intake addresses without account credentials. Check documentation, contact links, and history for exposure, even if no dependency code ran. Redact findings. Verify the credential owner, reachable repositories, write permissions, and downstream CI authority against current platform documentation and settings; do not infer scope or expiry from the address.
+
 Review process trees, filesystem reads, environment enumeration, metadata calls, credential-helper use, browser or keychain access, outbound requests, archive creation, encoding/encryption, and writes to legitimate developer services. If dependency, extension, MCP, agent, build, or diagnostic code executed with access, scope containment and rotation to every reachable identity and downstream publish/deploy path; lack of a known exfiltration domain is not proof of no exposure.
 
 ## Agent skill / IDE config install path
