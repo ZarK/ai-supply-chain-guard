@@ -11,11 +11,13 @@ on:
         required: true
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -30,16 +32,16 @@ jobs:
         env:
           INPUT_TAG: ${{ inputs.tag }}
         run: |
+          set -euo pipefail
+          source .github/scripts/changelog.sh
           if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
             tag="${INPUT_TAG}"
           else
             tag="${GITHUB_REF_NAME}"
           fi
 
-          if [[ ! "${tag}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
-            echo "::error::Release tag must use SemVer format like v1.0.0 or v1.0.0-rc.1"
-            exit 1
-          fi
+          validate_release_tag "$tag"
+          test "$(git rev-parse HEAD)" = "$(git rev-parse "refs/tags/$tag^{commit}")"
 
           git fetch origin main:refs/remotes/origin/main
           if ! git merge-base --is-ancestor HEAD origin/main; then
@@ -55,24 +57,40 @@ jobs:
           test -f supply-chain-guard/SKILL.md
           echo "tag=${tag}" >> "${GITHUB_OUTPUT}"
 
+      - name: Read release notes at the tag
+        shell: bash
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          set -euo pipefail
+          source .github/scripts/changelog.sh
+          git show "refs/tags/$TAG:CHANGELOG.md" > "$RUNNER_TEMP/release-changelog.md"
+          release_notes "$RUNNER_TEMP/release-changelog.md" "$TAG" > "$RUNNER_TEMP/release-notes.md"
+          archive="supply-chain-guard-${TAG}.tar.gz"
+          printf '\nThe installable artifact is `%s`; verify it with `%s.sha256`.\n' \
+            "$archive" "$archive" >> "$RUNNER_TEMP/release-notes.md"
+
       - name: Package skill
         shell: bash
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
         run: |
-          tag="${{ steps.release.outputs.tag }}"
-          archive="supply-chain-guard-${tag}.tar.gz"
+          set -euo pipefail
+          archive="supply-chain-guard-${TAG}.tar.gz"
           tar --sort=name --owner=0 --group=0 --numeric-owner -czf "${archive}" supply-chain-guard
           sha256sum "${archive}" > "${archive}.sha256"
 
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.release.outputs.tag }}
         shell: bash
         run: |
-          tag="${{ steps.release.outputs.tag }}"
-          archive="supply-chain-guard-${tag}.tar.gz"
-          gh release create "${tag}" \
+          set -euo pipefail
+          archive="supply-chain-guard-${TAG}.tar.gz"
+          gh release create "${TAG}" \
             "${archive}" \
             "${archive}.sha256" \
             --verify-tag \
-            --title "${tag}" \
-            --notes "Release ${tag} of the AI Supply Chain Guard skill. The installable artifact is ${archive}; verify it with ${archive}.sha256."
+            --title "${TAG}" \
+            --notes-file "$RUNNER_TEMP/release-notes.md"
