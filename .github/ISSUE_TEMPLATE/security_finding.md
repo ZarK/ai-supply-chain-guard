@@ -15,12 +15,16 @@ Explain how the published finding applies.
 Replace the example Sources URLs with the write-up or advisory URLs.
 Keep one bare HTTPS URL per bullet. Put no other text in Sources.
 
+<!-- markdownlint-disable MD034 -->
+
 ## Sources
 
 - https://example.com/
 - https://example.org/
 
 ## Plan
+
+<!-- markdownlint-enable MD034 -->
 
 Describe the changes to the skill or references.
 Add one Unreleased bullet with every source as a Markdown link and the issue reference.

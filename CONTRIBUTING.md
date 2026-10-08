@@ -36,8 +36,8 @@ Use this exact source format in the issue body:
 - https://example.com/second-write-up
 ```
 
-Use the exact heading `## Sources`. End the section at the next `## ` heading or the end of the body.
-Each non-empty line must contain `- ` and one bare `https://` URL. Put no other text in the section.
+Use the exact heading `## Sources`. End the section at the next heading that starts with `##` followed by a space or the end of the body.
+Each non-empty line must contain `-` followed by a space and one bare `https://` URL. Put no other text in the section.
 
 Use this changelog format for a source-tagged issue:
 
