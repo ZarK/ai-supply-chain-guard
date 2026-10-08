@@ -20,13 +20,16 @@ If a package-manager, shell, download, one-shot CLI, profiling, or diagnostic co
 3. Identify every artifact or package name, exact version, source, resolved URL/ref, hash, cache entry, generated file, and process introduced or touched by the command.
 4. Inventory the host or runner identity, filesystem mounts, environment variables, credential files, metadata services, network permissions, and publish/deploy authority reachable during execution.
 5. Enumerate outbound domains, IPs, URLs, API paths, uploaded content, and downloaded artifacts from DNS, proxy, endpoint, shell, CI, and application telemetry; compare them with current primary reports and advisories rather than a stale embedded IOC list.
-6. Rotate or revoke reachable credentials from a clean machine, sign out active sessions, review SCM/registry/cloud/CI activity for the exposure window, invalidate affected caches and artifacts, and rebuild from clean infrastructure when execution cannot be ruled out.
+6. Follow the [Containment sequencing guard](#containment) before credential changes. Rotate or revoke reachable credentials from a clean machine, sign out active sessions, review SCM/registry/cloud/CI activity for the exposure window, invalidate affected caches and artifacts, and rebuild from clean infrastructure when execution cannot be ruled out.
 7. Review the intake system separately: public ingest endpoints are not necessarily secrets, but filtering, supported origin/domain controls, alert routing, and automatic agent triggers should prevent attacker-authored remediation text from becoming trusted instructions.
 
 The final incident note must include the report source, ingest path, timestamp, exact command, artifact or package identity and version, host or runner identity, execution evidence, reachable secrets, outbound indicators, containment, and remaining unknowns.
 
 ## Containment
 
+- Check whether the payload can detect credential revocation, rotation, or session invalidation.
+- If it can, or if this is unknown for a payload family known to react, halt automated credential changes. Scripts, bulk rotation, and platform auto-revoke can trigger destructive handlers on affected hosts even when credentials change elsewhere. Isolate affected hosts. Preserve evidence. Neutralize the payload and its persistence. Then revoke exposed credentials from a clean machine.
+- If the payload cannot detect these changes, revoke exposed credentials immediately from a clean machine. Do not wait for further investigation or cleanup.
 - Remove or pin away from compromised versions and regenerate lockfiles only after deciding the safe target versions.
 - Disable or pause publish workflows, package release automation, and deployment jobs until credentials are rotated.
 - Rotate credentials from a device that is not in the exposure set, or from a reimaged host. Do not rotate from a workstation or runner that may still be compromised. If the host ran a malicious postinstall, rotating there can hand the attacker the replacements.
@@ -89,6 +92,7 @@ Do not close the incident after reverting the lockfile or deprecating a release.
 
 Stop and ask the user or incident owner before:
 
+- revoking credentials, rotating credentials, or invalidating sessions when the payload can react and you cannot neutralize its persistence first
 - deleting evidence or package-manager caches
 - rotating production credentials that could cause downtime
 - revoking organization-wide tokens or deploy keys
