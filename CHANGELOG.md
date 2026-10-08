@@ -4,6 +4,8 @@ This project uses Git tags and GitHub releases as the source of truth for releas
 
 ## Unreleased
 
+- Require containment before credential changes when a payload can react to revocation. Cover known reactive families with unknown behavior, automated changes, and escalation when persistence cannot be neutralized. Keep immediate revocation when the payload cannot detect credential changes.
+
 ## v1.5.0 - 2026-08-30
 
 - Check the source, publisher, domain, exact artifact, age, and integrity before recommending a software download or install command. Require source approval before showing a runnable command in chat.
