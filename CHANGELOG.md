@@ -6,8 +6,8 @@ This project uses Git tags and GitHub releases as the source of truth for releas
 
 ## v1.6.0 - 2026-10-08
 
-- Stop affected tool use and dependent actions after unexpected MCP or agent configuration changes, or tool metadata that redirects authority, including already-loaded tools and changes after approval. Treat intake addresses that embed authentication tokens as credentials, cover alternate repository write paths, and extend incident response to credential exposure without code execution.
-- Require containment before credential changes when a payload can react to revocation. Cover known reactive families with unknown behavior, automated changes, and escalation when persistence cannot be neutralized. Keep immediate revocation when the payload cannot detect credential changes.
+- Stop affected tool use and dependent actions after unexpected MCP or agent configuration changes, or tool metadata that redirects authority, including already-loaded tools and changes after approval. Treat intake addresses that embed authentication tokens as credentials, cover alternate repository write paths, and extend incident response to credential exposure without code execution. Sources: [Socket](https://socket.dev/blog/sandworm-mode-npm-worm-ai-toolchain-poisoning), [Aikido](https://www.aikido.dev/blog/gitlab-email-push-to-main).
+- Require containment before credential changes when a payload can react to revocation. Cover known reactive families with unknown behavior, automated changes, and escalation when persistence cannot be neutralized. Keep immediate revocation when the payload cannot detect credential changes. Sources: [Socket](https://socket.dev/blog/tensorlake-compromise), [Aikido](https://www.aikido.dev/blog/tensorlake-npm-package-compromised).
 
 ## v1.5.0 - 2026-08-30
 
