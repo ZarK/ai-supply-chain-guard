@@ -60,28 +60,38 @@ changelog_bullets() {
 }
 
 added_unreleased_bullets() {
-  local base head old_entries entry old_entry present
+  local base head entry
+  local -A old_entries=()
   base=$(changelog_section "$1" '## Unreleased') || return 1
   head=$(changelog_section "$2" '## Unreleased') || return 1
-  old_entries=$(changelog_bullets <<< "$base")
+  while IFS= read -r entry; do
+    [[ -z $entry ]] || old_entries["$entry"]=1
+  done < <(changelog_bullets <<< "$base")
   while IFS= read -r entry; do
     [[ -n $entry ]] || continue
-    present=false
-    while IFS= read -r old_entry; do
-      if [[ $entry == "$old_entry" ]]; then present=true; break; fi
-    done <<< "$old_entries"
-    [[ $present == true ]] || printf '%s\n' "$entry"
+    [[ ${old_entries["$entry"]-} == 1 ]] || printf '%s\n' "$entry"
   done < <(changelog_bullets <<< "$head")
 }
 
 # Results: source_tagged and source_urls. Issue text is data, never shell code.
 parse_sources() {
-  local file=$1 issue=$2 line active=false
+  local file=$1 issue=$2 line active=false fence='' marker
+  local fence_pattern='^[[:space:]]*(`{3,}|~{3,})'
   local url_pattern='^- https://[^[:space:]<>]+$'
   source_tagged=false
   source_urls=()
   while IFS= read -r line || [[ -n $line ]]; do
     line=${line%$'\r'}
+    if [[ $line =~ $fence_pattern ]]; then
+      marker=${BASH_REMATCH[1]}
+      if [[ -z $fence ]]; then
+        fence=$marker
+      elif [[ ${marker:0:1} == "${fence:0:1}" && ${#marker} -ge ${#fence} ]]; then
+        fence=''
+      fi
+      continue
+    fi
+    [[ -z $fence ]] || continue
     if [[ $line == '## Sources' ]]; then
       [[ $source_tagged == false ]] || { fail "Issue #$issue has duplicate Sources sections."; return 1; }
       source_tagged=true
@@ -155,6 +165,21 @@ validate_release_tag() {
     for identifier in "${identifiers[@]}"; do
       [[ ! $identifier =~ ^0[0-9]+$ ]] || { fail 'Numeric prerelease identifiers must not have leading zeros.'; return 1; }
     done
+  fi
+}
+
+# Only an HTTP 404 means the release is absent. Other API failures stop preparation.
+require_unpublished_release() {
+  local repo=$1 tag=$2 response protocol status remainder
+  if response=$(gh api --include "repos/$repo/releases/tags/$tag" 2>&1); then
+    fail "Release $tag already exists."
+    return 1
+  fi
+  read -r protocol status remainder <<< "$response"
+  if [[ $protocol != HTTP/* || $status != 404 ]]; then
+    printf '%s\n' "$response" >&2
+    fail "Could not check release $tag."
+    return 1
   fi
 }
 

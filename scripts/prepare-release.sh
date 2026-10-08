@@ -25,12 +25,7 @@ remote_refs=$(git ls-remote --refs origin "refs/tags/$tag" "refs/heads/$branch")
 repo=$(gh repo view "$(git remote get-url origin)" --json nameWithOwner --jq .nameWithOwner)
 work=$(mktemp -d)
 trap 'rm -f -- "$work"/*; rmdir -- "$work"' EXIT
-gh api --paginate --slurp "repos/$repo/releases?per_page=100" > "$work/releases.json"
-jq -e --arg tag "$tag" 'length > 0 and all(.[]; type == "array") and
-  all(.[][]; (.tag_name | type == "string") and .tag_name != $tag)' "$work/releases.json" > /dev/null || {
-  fail "Release $tag already exists or the release list could not be read."
-  exit 1
-}
+require_unpublished_release "$repo" "$tag"
 prepare_changelog CHANGELOG.md "$tag" "$(date -u +%F)" > "$work/changelog"
 
 git switch -c "$branch"

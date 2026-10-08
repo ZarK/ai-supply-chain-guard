@@ -59,6 +59,21 @@ expect fail 'sources cannot be split across entries' check 66 "$work/issue"
 cp "$work/complete" "$work/head"
 cp "$work/complete" "$work/base"
 expect fail 'unchanged bullet does not count as added' check 66 "$work/issue"
+# Main released a bullet after the topic branch started. The topic kept it unchanged.
+cp "$work/complete" "$work/merge-base"
+prepare_changelog "$work/merge-base" v1.1.0 2026-10-08 > "$work/main"
+expect pass 'base tip would incorrectly count the released bullet as new' \
+  bash "$script_dir/validate-changelog.sh" "$work/paths" "$work/main" "$work/head"
+expect fail 'merge base rejects an unchanged bullet released on main' \
+  bash "$script_dir/validate-changelog.sh" "$work/paths" "$work/merge-base" "$work/head"
+printf '\n- Add a new rule.\n' >> "$work/head"
+expect pass 'merge base accepts a new bullet after main releases' \
+  bash "$script_dir/validate-changelog.sh" "$work/paths" "$work/merge-base" "$work/head"
+printf '# Changelog\n\n## Unreleased\n\n- Literal [entry]* $(example) `example`.\n' > "$work/base"
+cp "$work/base" "$work/head"
+expect fail 'membership index treats shell metacharacters as exact text' check
+printf '\n- Literal entry $(example) `example`.\n' >> "$work/head"
+expect pass 'membership index distinguishes similar literal entries' check
 printf '# Changelog\n\n## Unreleased\n' > "$work/base"
 printf '# Changelog\n\n## Unreleased\n\n## v1.0.0 - 2026-01-01\n\n- Added only to an old release.\n' > "$work/head"
 expect fail 'bullet outside Unreleased does not count' check
@@ -79,6 +94,60 @@ expect pass 'multiple closing issues' check 66 "$work/issue" 67 "$work/other-iss
 printf '## Sources\r\n\r\n- https://example.com/report_(detail)?x=1&y=2\r\n' > "$work/issue"
 printf '# Changelog\n\n## Unreleased\n\n- Check details. Sources: [Report](https://example.com/report_(detail)?x=1&y=2). (#66)\n' > "$work/head"
 expect pass 'CRLF issue and exact URL punctuation' check 66 "$work/issue"
+
+printf '# Changelog\n\n## Unreleased\n\n- Require source checks.\n' > "$work/head"
+cat > "$work/issue" <<'EOF'
+## Example
+
+````markdown
+## Sources
+- https://example.com/example
+```
+## Sources
+~~~
+## Sources
+````
+EOF
+expect pass 'fenced Sources headings ignore shorter and different fence markers' check 66 "$work/issue"
+printf '  ~~~markdown\r\n## Sources\r\n- https://example.com/example\r\n  ~~~~\r\n' > "$work/issue"
+expect pass 'indented tilde fence and CRLF hide Sources example' check 66 "$work/issue"
+cat >> "$work/issue" <<'EOF'
+## Sources
+
+```markdown
+## Sources
+Example text is not a source URL.
+## Plan
+```
+- https://example.com/first
+EOF
+expect fail 'real Sources after fenced example still requires a link' check 66 "$work/issue"
+cp "$work/complete" "$work/head"
+expect pass 'fenced lines and headings inside real Sources are ignored' check 66 "$work/issue"
+
+# Mock the API locally; no authentication or network access is needed.
+check_release_lookup() (
+  local response_kind=$1
+  gh() {
+    [[ $# == 3 && $1 == api && $2 == --include &&
+      $3 == repos/example/project/releases/tags/v1.2.3 ]] || return 99
+    case $response_kind in
+      exists) printf 'HTTP/2.0 200 OK\r\n\r\n{}\n'; return 0 ;;
+      absent) printf 'HTTP/2.0 404 Not Found\r\n\r\n{}\n'; return 1 ;;
+      forbidden) printf 'HTTP/2.0 403 Forbidden\r\n\r\n{}\n'; return 1 ;;
+      unauthorized) printf 'HTTP/1.1 401 Unauthorized\r\n\r\n{}\n'; return 1 ;;
+      server_error) printf 'HTTP/2.0 500 Internal Server Error\r\n\r\n{}\n'; return 1 ;;
+      transport_error) printf 'Connection failed (404 in diagnostic text).\n' >&2; return 1 ;;
+      empty) return 1 ;;
+    esac
+  }
+  require_unpublished_release example/project v1.2.3
+)
+expect fail 'release lookup rejects an existing release' check_release_lookup exists
+expect pass 'release lookup permits HTTP 404' check_release_lookup absent
+for response_kind in forbidden unauthorized server_error transport_error empty; do
+  expect fail "release lookup stops on $response_kind" check_release_lookup "$response_kind"
+done
 
 expect pass 'stable SemVer' validate_release_tag v1.2.3
 expect pass 'prerelease and build SemVer' validate_release_tag v1.2.3-rc.1+build.01

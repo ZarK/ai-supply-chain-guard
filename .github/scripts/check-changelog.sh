@@ -17,7 +17,8 @@ if ! skill_changed "$work/paths"; then
   printf 'No skill paths changed; no changelog entry required.\n'
   exit 0
 fi
-git show "$BASE_SHA:CHANGELOG.md" > "$work/base"
+merge_base=$(git merge-base "$BASE_SHA" "$HEAD_SHA")
+git show "$merge_base:CHANGELOG.md" > "$work/base"
 git show "$HEAD_SHA:CHANGELOG.md" > "$work/head"
 
 # Follow the closing references, including all pages and cross-repository issues.
